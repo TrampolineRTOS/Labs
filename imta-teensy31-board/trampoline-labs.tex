@@ -75,7 +75,7 @@ sets the {\tt trampoline} directory as current directory. This assumes the {\tt 
 A toolchain to build and download programs with Trampoline has been installed on the computers in the \texttt{/usr/local/tp\_treel\_imta}. In this folder, you will find:
 \begin{itemize}
     \item a version of Trampoline in the \texttt{trampoline} subfolder; it includes the \texttt{goil} compiler to parse \texttt{OIL} kernel configuration files, the kernel code, and an automated build system.
-    \item a cross-compilation chain, namely \texttt{arm-gcc} in the \texttt{gcc-arm-noe-eabi-7-2018-q2-update} subfolder.
+    \item a cross-compilation chain, namely \texttt{arm-gcc} in the \texttt{gcc-arm-none-eabi-7-2018-q2-update} subfolder.
     \item a tool to download binaries to the target board: \texttt{teensy-loader-cli}.
 \end{itemize}
 
@@ -330,14 +330,14 @@ You should also modify the \texttt{LDFLAGS} lines describing the location of the
 
 {\footnotesize
 \begin{verbatim}
--L/usr/local/tp_treel_imta/gcc-arm-noe-eabi-7-2018-q2-update/arm-none-eabi/lib/thumb/v7e-m
+-L/usr/local/tp_treel_imta/gcc-arm-none-eabi-7-2018-q2-update/arm-none-eabi/lib/thumb/v7e-m
 \end{verbatim}}
 
 and the second one to:
 
 {\footnotesize
 \begin{verbatim}
--L/usr/local/tp_treel_imta/gcc-arm-noe-eabi-7-2018-q2-update/lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m
+-L/usr/local/tp_treel_imta/gcc-arm-none-eabi-7-2018-q2-update/lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m
 \end{verbatim}}
 
 
@@ -352,7 +352,7 @@ To compile this application, go into the lab1 directory and type:
 
 \unixcl{\parbox{\linewidth}{%
 goil\blanc{}--target=cortex/armv7/mk20dx256/teensy31\textbackslash\\
---template=/usr/local/tp_tempsreel_imta/trampoline/goil/templates\blanc{}lab1.oil}}
+--templates=/usr/local/tp_treel_imta/trampoline/goil/templates\blanc{}lab1.oil}}
 
 The \texttt{--target} option gives the target system (here we generate the OS level data structures of Trampoline for a {\tt cortex} core with the {\tt armv7} instruction set, a {\tt mk20dx256} micro-controller and the board is a {\tt teensy}).
 The \texttt{--templates} option indicates to Goil where to find the template files used to generate the C code of the configuration of the kernel.
