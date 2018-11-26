@@ -591,7 +591,7 @@ After starting the system waits.
 When the first button is pressed, the system starts a {\it function}\footnote{Here we mean a function of the application, not a function of the C language.} F that is implemented using a periodic task (period = 1s).
 To ``see'' F, uses a blinking LED as in the second application.
 When the first button is pressed again, function F is stopped.
-When the second button is pressed, the system is shutdown as quickly as possible (ie ShutdownOS\footnote{The ShutdownOS service shutdowns the operationg system. All tasks and alarms are stopped. ShutdownOS takes a StatusType argument to specify the kind or error which occurred. In our case use E_OK as argument.} is called).
+When the second button is pressed, the system is shutdown as quickly as possible (ie ShutdownOS\footnote{The ShutdownOS service shutdowns the operating system. All tasks and alarms are stopped. ShutdownOS takes a StatusType argument to specify the kind or error which occurred. In our case use E_OK as argument.} is called).
 
 \begin{ex}
     Explain the design of the application: provide the list and configuration of tasks and alarms.
