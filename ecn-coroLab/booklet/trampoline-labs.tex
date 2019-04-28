@@ -1,0 +1,950 @@
+\documentclass[11pt]{report}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   % ... or a4paper or a5paper or ...
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\usepackage[colorlinks]{hyperref}
+\usepackage{underscore}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{framed}
+\usepackage{listings}
+\usepackage[nosolutionfiles]{answers}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,shapes,snakes,patterns,decorations}
+\usetikzlibrary{shapes.geometric,shapes.misc}
+\usetikzlibrary{shadows}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+%\usepackage{adjustbox}
+\usepackage{todonotes}
+
+\lstset{
+  language=C,
+  basicstyle=\ttfamily\footnotesize,
+  commentstyle=\itshape\color{cyan},
+  frame=lines
+}
+
+
+\Newassociation{sol}{Solution}{ans}
+\newtheorem{ex}{Question}
+
+\newcommand{\normaltilde}{{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}}
+\newcommand{\unixcl}[1]{\texttt{\fcolorbox{black}{gray!20}{\footnotesize#1}}}
+\newcommand{\blanc}{\fcolorbox{white}{white}{~}}
+\newcommand{\tabkey}{\mbox{$\rightarrow\hspace{-1.4mm}\vert$}}
+\title{PRETS\\Lab booklet\\2018-2019}
+\author{Jean-Luc B\'echennec, Mikaël Briday, S\'ebastien Faucou}
+%\date{}                                           % Activate to display a given date or no date
+
+\hypersetup{linkcolor=red}
+
+\colorlet{shadecolor}{gray!10}
+
+\begin{document}
+\maketitle
+
+
+\chapter{Installation}
+
+\section{Foreword}
+
+It is assumed that you have a basic knowledge of the command line.
+If it is not the case, make sure to have the first configuration steps checked before to proceed with the labs.
+
+\begin{framed}
+Do not copy the commands from the PDF file, the characters you get may not have the correct code and the shell will not understand them.
+\end{framed}
+
+When typing shell commands, remember that spaces are important because they separate the command and its arguments. In this document, spaces in commands are represented by a white rectangle like in the following command (it is an example, do not type it):
+
+\noindent
+\begin{minipage}{.25\textwidth}
+\unixcl{cd\blanc{}trampoline}
+\end{minipage}
+\begin{minipage}{.7\textwidth}
+sets the {\tt trampoline} directory as current directory. This assumes the {\tt trampoline} directory is a subdirectory of the current one.
+\end{minipage}
+
+You will work within a \texttt{dmg} file.
+A \texttt{dmg} is a disk image file, \textsl{i.e.} a file that contains a small filesystem.
+
+Get the \texttt{prets.dmg} file and open it by double clicking on its icon.
+It will open the disk image in the \texttt{/Volumes/PRETS} folder.
+
+This disk image contains the following folders:
+\begin{itemize}
+    \item \texttt{trampoline}: a folder that contains the source code of Trampoline RTOS and some other tools, including \texttt{goil}, the OIL compiler.
+    \item \texttt{gcc-arm-none-eabi-8-2018-q4-major}: a folder that contains the gnu compiler toolchain to cross-compile programs for the lab board.
+    \item stlink\ldots \todo{check stlink installation}
+\end{itemize}
+
+All these tools are open-source (see the licence of each projet for more details) and are available on the following websites:
+
+\begin{itemize}
+    \item
+        \url{https://github.com/TrampolineRTOS/trampoline}
+    \item
+        \url{https://launchpad.net/gcc-arm-embedded}
+    \item
+        \url{https://github.com/texane/stlink}
+\end{itemize}
+
+\section{Building goil}
+
+The first step to have a working configuration is to build \texttt{goil}, the OIL compiler.
+
+To do so:
+\begin{itemize}
+    \item open a terminal (you can do it by pressing \texttt{Command+Space} and then type \texttt{Terminal} and hit return.
+    \item change your working directory by typing the following command in the terminal:
+
+\noindent
+\unixcl{cd\blanc{}/Volumes/PRETS/trampoline/goil/makefile-macosx}
+
+    \item build \texttt{goil} by typing the following command in the terminal:
+
+\unixcl{./build.py}
+
+
+\end{itemize}
+
+\section{Setting up the environment}
+
+In order to be able to use the tools, you have to define the configuration of your development environment.
+First, you have to inform the system of the location of the tools.
+This is done by setting the {\tt PATH} environment variable in your \texttt{.profile} file.
+It can be done with the following commands:
+
+\unixcl{echo PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH >>\blanc{}\normaltilde/.profile}
+
+\unixcl{echo PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH >>\blanc{}\normaltilde/.profile}
+
+\todo{Check if there is also something to do for stlink}
+
+The \texttt{.profile} file is parsed by the shell when it starts. To force your current shell instance to read the file, use the following command:
+
+\unixcl{source\blanc{}\normaltilde/.profile}
+
+This will enable the configuration in the terminal where you typed the command.
+In order to have the configuration active in all terminals, you have to log out and then log in the system.
+
+Now, check that \texttt{goil} is working.
+The command \unixcl{goil\blanc{}--version} should print:
+
+\medskip
+
+\begin{shaded*}
+\tiny
+\vspace{-1.7mm}
+\begin{verbatim}
+goil : 3.1.9, build with GALGAS 3.3.11
+No warning, no error.
+\end{verbatim}
+\end{shaded*}
+
+Then check that \texttt{gcc-arm} is also working.
+The commande \unixcl{arm-none-eabi-gcc\blanc{}--version} should print:
+
+\medskip
+
+\begin{shaded*}
+\tiny
+\vspace{-1.7mm}
+\begin{verbatim}
+arm-none-eabi-gcc (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
+Copyright (C) 2018 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+\end{verbatim}
+\end{shaded*}
+
+Last, \todo{chec for stlink}
+
+\medskip
+
+\begin{shaded*}
+\tiny
+\vspace{-1.7mm}
+\begin{verbatim}
+\end{verbatim}
+\end{shaded*}
+
+You are now ready to compile and load your first application on the board. But first, let's take a quick look at the board.
+
+\chapter{The board}
+
+\section{Overview}
+
+You already know the board since it is the same that is used for the labs of the MICRO course.
+It is built around a STM32F303 microcontroller unit (MCU) that has an ARM Cortex-M4 computing core.
+It is a 32 bits micro-controller running at 64MHz.
+It embeds 65kB of flash memory to store the program and the constant data and 12kB of SRAM to store the variables.
+
+Among the peripherals present on the board, we will use:
+\begin{itemize}
+    \item the reset button;
+    \item the LCD screen;
+    \item the I/O extender that is used to connect:
+    \begin{itemize}
+        \item on port A, 8 leds;
+        \item on port B, 4 push buttons and 4 switches.
+    \end{itemize}
+\end{itemize}
+
+Communication between the MCU and both the LCD and the I/O multiplexer uses the SPI interface of the MCU.
+Thus to ensure integrity of transactions, the software design must enforce that transactions are atomic with regards to each others.
+
+The board power is supplied by USB.
+Connect a USB  port to the MCU USB plug and the board switches on.
+
+\section{The \texttt{coro_utils} functions}
+\label{sec:coroutils}
+
+A set of functions are provided to use the LCD, the I/O extender, and one of the embedded timer.
+The source code of these functions is provided in the \texttt{coro_utils.cpp} file.
+Some of them are documented below.
+
+\begin{description}
+    \item[void setupIOExtender()] sets up the IO extender. This function has to be called once, before to use the functions of the IO Extender driver (see below).
+    \item[void setupDisplay()] sets up the display. This function has to be called once, before to use the printing functions.
+    \item[void eraseDisplay()] erases the display.
+    \item[void println_string(\textit{const char * str})] prints \textit{str} on the TFT and goes to next line.
+    \item[void println_uint(\textit{uint32_t u})] prints \textit{u} on the TFT and goes to next line.
+    \item[void println_int(\textit{int32_t u})] prints \textit{i} on the TFT and goes to next line.
+    \item[void setupTimer()] sets up timer TIM6 with a 1$\mu$s tick. This function has to be called once, before to use the functions related to the timer.
+    \item[void resetTimer()] resets TIM6 value to 0.
+    \item[uint32_t getTimerValue()] returns TIM6 current value.
+\end{description}
+
+
+\section{The IO extender driver}
+
+The IO extender drivers implements a set of functions to change the states of LEDs and poll the state of buttons.
+Notice that the programming of IO pins in input or output is done in the \textit{setupIOExtender} function.
+
+The driver is provided by the class \textit{mcp23s17}.
+Users should not create instance of this class as a singleton instance named \textit{ioExt} is created at compile time.
+
+Among the funciton provided by the driver, we will use:
+
+\begin{description}
+    \item[void digitalWrite(\textit{port p}, \textit{uint8\_t bitNum, bool value})] sets the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}) to value \textit{value} (0 or 1).
+
+    \item[uint8\_t digitalRead(\textit{port p}, \textit{uint8\_t bitNum})] returns the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
+
+    \item[void digitalToggle(\textit{port p}, \textit{uint8\_t bitNum})] toggles the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
+
+    \item[void setBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to HIGH.
+
+    \item[void clearBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to LOW.
+
+    \item[void writeBits(\textit{port p}, \textit{uint8\_t val})] overwrites values of bits of \textit{p} with \textit{val}.
+
+    \item[uint8_t readBits(\textit{port p})] returns the values of bits of \textit{p}.
+\end{description}
+
+As an illustration, the following code turn on LED 0 and toggles LED 1.
+
+\begin{lstlisting}[language=C]
+TASK(t_LED0ON_LED1TOGGLE)
+{
+    ioExt.digitalWrite(mcp23s17::PORTA, 0, 1);
+    ioExt.digitalToggle(mcp23s17::PORTA, 1);
+    TerminateTask();
+}
+\end{lstlisting}
+
+
+And the following example reads switch button {0} to start Trampoline in a specific appmode.
+
+\begin{lstlisting}[language=C]
+int main()
+{
+    if (ioExt.digitalRead(mcp23s17::PORTB, 0) == 0)
+    {
+      /* Start Trampoline in the testAppmode appmode */
+      StartOS(testAppmode);
+    }
+    else                       /* otherwise */
+    {
+      /* Start Trampoline in the default appmode */
+      StartOS(OSDEFAULTAPPMODE);
+    }
+    return 0;
+}
+\end{lstlisting}
+
+
+\chapter{Lab 1 -- Understanding fixed priority scheduling}
+
+\section{Goal}
+
+The goal of this lab is to become familiar with OSEK/VDX applications development process and with Trampoline and to understand how fixed priority scheduling works.
+We will also see Events.
+Trampoline is a Free Software implementation of the OSEK/VDX specification.
+Trampoline includes an OIL compiler which allows, starting from an OIL description, to generate OS level data structures of the application.
+In addition to the OIL description, the developer must provide the C sources of tasks and ISRs implementing the application.
+
+
+\section{Starting point}
+
+Go into the lab1 directory. There are 4 files:
+
+\begin{description}
+    \item[coro\_utils.h] the header file to include to use the functions described in section~\ref{sec:coroutils}.
+    \item[coro\_utils.cpp] the C++ source code of the functions described in section~\ref{sec:coroutils}.
+    \item[lab1.oil] the OIL description of a lab1 application.
+    \item[lab1.cpp] the C++ source code for the lab1.
+\end{description}
+
+Edit the lab1.oil file and look at the \texttt{TRAMPOLINE\_BASE\_PATH} attribute (in OS $>$ BUILD attribute).
+It should point to the directory where Trampoline is installed.
+In your case, it should be: \texttt{/Volumes/PRETS/trampoline/}.
+
+%You should also modify the \texttt{LDFLAGS} lines describing the location of the libraries used by the cross compiler. Set the first line to:
+
+%{\footnotesize
+%\begin{verbatim}
+%-L/usr/local/tp_treel_imta/gcc-arm-none-eabi-7-2018-q2-update/arm-none-eabi/lib/thumb/v7e-m
+%\end{verbatim}}
+
+%and the second one to:
+
+%{\footnotesize
+%\begin{verbatim}
+%-L/usr/local/tp_treel_imta/gcc-arm-none-eabi-7-2018-q2-update/lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m
+%\end{verbatim}}
+
+
+lab1 is a very simple application with only 1 task called {\tt task1}. It starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and turns on LED A0. Look at the OIL file and the C source file.
+
+To compile this application, go into the lab1 directory and type:
+
+%\unixcl{\parbox{230\unitlength}{export\blanc{}PATH=\$PATH\textbackslash\\
+%:\normaltilde/trampoline/goil/makefile-macosx\textbackslash\\
+%:\normaltilde/Tools/gcc-arm/gcc-arm-none-eabi/bin\textbackslash\\
+%:\normaltilde/Tools/bin}}
+
+\unixcl{\parbox{\linewidth}{%
+goil\blanc{}--target=cortex/armv7em/stm32f303/coroLabBoard\textbackslash\\
+--templates=/Volumes/PRETS/trampoline/goil/templates\blanc{}lab1.oil}}
+
+The \texttt{--target} option gives the target system (here we generate the OS level data structures of Trampoline for a \texttt{cortex} core with the \texttt{armv7em} instruction set, a \texttt{stm32f303} micro-controller and the board is the \texttt{coroLabBoard}).
+The \texttt{--templates} option indicates to Goil where to find the template files used to generate the C code of the configuration of the kernel.
+The OIL file gives the names of the C++ source files (with \texttt{APP_CPPSRC}) and the name of the executable file (with \texttt{APP_NAME}).
+
+Alongside the C files of the kernel configuration, Goil generates a build script for the application (files {\tt make.py} and {\tt build.py}).
+
+If you change something in the OIL file or in your C++ file, you should not need to re-run Goil because the build script will run it when needed.
+
+Continue the build process by typing:
+
+\unixcl{./build.py}
+
+The application and Trampoline OS are compiled and linked together.
+The target file is named \texttt{lab1\_elf}.
+
+To upload the application to the board, check that the board is connected to the computer, then type:
+
+\unixcl{./build.py\blanc{}burn}
+
+The following message is displayed (some lines have been truncated to fit on the page):
+
+\begin{shaded*}
+\scriptsize
+\vspace{-1.7mm}
+\begin{verbatim}
+Nothing to make.
+st-flash write lab1.elf.bin 0x8000000
+st-flash 1.5.1
+2019-04-28T17:45:53 INFO common.c: Loading device parameters....
+2019-04-28T17:45:53 INFO common.c: Device connected is: F334 device, id 0x10016438
+2019-04-28T17:45:53 INFO common.c: SRAM size: 0x3000 bytes (12 KiB), Flash: 0x10000 ...
+2019-04-28T17:45:53 INFO common.c: Attempting to write 16660 (0x4114) bytes to stm32 ...
+Flash page at addr: 0x08004000 erased
+2019-04-28T17:45:53 INFO common.c: Finished erasing 9 pages of 2048 (0x800) bytes
+2019-04-28T17:45:53 INFO common.c: Starting Flash write for VL/F0/F3/F1_XL core id
+2019-04-28T17:45:53 INFO flash_loader.c: Successfully loaded flash loader in sram
+  9/9 pages written
+2019-04-28T17:45:53 INFO common.c: Starting verification of write complete
+2019-04-28T17:45:54 INFO common.c: Flash written and verified! jolly good!
+\end{verbatim}
+\end{shaded*}
+
+The program starts and LED A0 should be on.
+
+%\subsection{A word about memory sections}
+
+%AUTOSAR defines a way to put objects (constants, variables and functions) in memory sections in a portable way\footnote{memory section declaration is not part of the C standard}. For that, a set of macro are used along with a generated file: MemMap.h. Functions should be declared with the \lstinline{FUNC} macro, variables with the \lstinline{VAR} macro, constants with the \lstinline{CONST} macro and pointers to variables, pointers to constant, constant pointers to variable and constant pointers to constant with \lstinline{P2VAR}, \lstinline{P2CONST}, \lstinline{CONSTP2VAR} and \lstinline{CONSTP2CONST} respectively. Sections are opened and closed with a macro definition and the inclusion of the \lstinline{tpl_memmap.h} file. For instance:
+
+%\begin{lstlisting}
+%#define APP_Task_my_periodic_task_START_SEC_VAR_32BIT
+%#include "tpl_memmap.h"
+%VAR(int, AUTOMATIC) period;
+%VAR(int, AUTOMATIC) occurence;
+%#define APP_Task_my_periodic_task_STOP_SEC_VAR_32BIT
+%#include "tpl_memmap.h"
+%\end{lstlisting}
+
+%defines variables \lstinline{period} and \lstinline{occurence} in the variables section of task \lstinline{my_periodic_task}.
+
+%\begin{lstlisting}
+%#define APP_Task_my_periodic_task_START_SEC_CODE
+%#include "tpl_memmap.h"
+%TASK(my_periodic_task)
+%{
+  %...
+  %TerminateTask();
+%}
+%#define APP_Task_my_periodic_task_STOP_SEC_CODE
+%#include "tpl_memmap.h"
+%\end{lstlisting}
+
+%defines the task \lstinline{my_periodic_task} in the code section of task \lstinline{my_periodic_task}. \lstinline{goil} generates the sections for tasks according to the description.
+
+
+\section{OS system calls and tasks}
+
+For each question, you should create a copy of the lab1 directory and change its name to lab1q1, lab1q2, \ldots
+
+\subsection{Task activation and scheduling}
+
+The \texttt{ActivateTask()} system call allows to activate a task of the application.
+
+\begin{ex}
+    Add two tasks in the system: \texttt{task2} and \texttt{task3}.
+    \begin{itemize}
+        \item add the declaration of both tasks in the OIL file; \texttt{task2} should have priority 1 and its AUTOSTART attribute should be set to FALSE; \texttt{task3} should have priority 8 and its AUTOSTART attribute should be set to FALSE;
+        \item in the cpp file, you should:
+            \begin{itemize}
+                \item declare each tasks with the DeclareTask keyword,
+                \item provide the body of each tasks:
+                    \begin{itemize}
+                        \item task \texttt{task2} turns on LED A2 and turns off LED A3;
+                        \item task \texttt{task3} turns on LED A3 and turns off LED A2;
+                    \end{itemize}
+                \item and, lastly, modify task \texttt{task1} so that is activates \texttt{task2} and \texttt{task3} (in this order).
+            \end{itemize}
+    \end{itemize}
+
+    Before to execute the resulting application, draw a schedule and determine the final state of LEDS.
+    Your diagram must clearly show activation, execution and termination of each job using symbols used in the course.
+    Then execute the application and check the correctness of your diagram.
+\end{ex}
+
+\begin{ex}
+    Build an application to measure the execution time of \texttt{ActivateTask} in the following cases:
+    \begin{itemize}
+        \item fully preemptive scheduling, activation of a higher priority task.
+        \item fully preemptive scheduling, activation of a lower priority task.
+        \item fully non preemptive scheduling, activation of a higher priority task.
+        \item fully non preemptive scheduling, activation of a lower priority task.
+    \end{itemize}
+
+    Explain how to use the timer functions for each case and explain the results.
+\end{ex}
+
+\subsection{Task chaining}
+
+The \texttt{ChainTask()} system call allows to chain the execution of a task: the calling job terminates and a new job of the target task is created.
+
+\begin{ex}
+    Starting from the application of question~1, replace the call to \texttt{TerminateTask} by a \texttt{ChainTask(task3)} at the end of task a task.
+    Update task \texttt{task3} so that it prints something each time it is executed.
+    Draw a schedule of the new system.
+    Then execute the application to check the correctness of your diagram.
+    Comment on the differences with the previous application.
+\end{ex}
+
+\begin{ex}
+    Chain to \texttt{task2} instead of \texttt{task3}.
+    Update task \texttt{task2} so that it prints something each time it is executed.
+    Draw a schedule of the new system.
+    Then execute the application to check the correctness of your diagram.
+    Comment on the differences with the previous application.
+\end{ex}
+
+\begin{ex}
+    Test the error code returned by ChainTask.
+    Modify the OIL file so that ChainTask returns \texttt{E\_OK}.
+    Draw a schedule of the new system.
+    Then execute the application to check the correctness of your diagram.
+    Comment on the differences with the previous application.
+\end{ex}
+
+\begin{ex}
+    Build an application to measure the execution time of \texttt{ChainTask} in the following cases:
+    \begin{itemize}
+        \item fully preemptive scheduling, activation of a higher priority task.
+        \item fully preemptive scheduling, activation of a lower priority task.
+        \item fully non preemptive scheduling, activation of a higher priority task.
+        \item fully non preemptive scheduling, activation of a lower priority task.
+    \end{itemize}
+
+    Explain how to use the timer functions for each case and explain the results.
+\end{ex}
+
+\section{Extended tasks and synchronization using events}
+
+Unlike a basic task, an extended task may wait for an event.
+In terms of scheduling, a job is activated when a task is activated or when it leaves the waiting state.
+
+Before to proceed with the following questions, consult the slides of the course to become familiar with events in Trampoline.
+
+%In the OIL file, set the priority of \texttt{task_0} to 8 and add two events \texttt{evt_0} and \texttt{evt_1}. \texttt{evt_0} is used by \texttt{task_0} and \texttt{evt_1} is used by \texttt{task_1}. \texttt{a_task} activates \texttt{task_0} and \texttt{task_1} then sets \texttt{evt_0} and \texttt{evt_1} and terminates. \texttt{task_0} and \texttt{task_1} wait for their event, clear it and terminate.
+
+\begin{ex}
+     Based on the application of Question~1, build an application with the following characteristics:
+\begin{itemize}
+    \item set priority of \texttt{task1} to 8;
+    \item add two events, \texttt{evt\_1} and \texttt{evt\_2}:
+        \begin{itemize}
+            \item \texttt{evt\_1} is set by task \texttt{task0} to task \texttt{task1}.
+            \item \texttt{evt\_2} is set by task \texttt{task0} to task \texttt{task2}.
+        \end{itemize}
+    \item modify the code of the tasks:
+        \begin{itemize}
+            \item task \texttt{task0} activates \texttt{task1} and \texttt{task2} then sets \texttt{evt\_1} and \texttt{evt\_2} before to terminate.
+            \item tasks \texttt{task1} and \texttt{task2} wait for their event, clear it, and terminate.
+        \end{itemize}
+\end{itemize}
+
+Draw a schedule of the new system.
+Then execute the application to check the correctness of your diagram (before to run the application, add outputs in the code of the task, for instance writes to the LCD or LEDs to ease the correctness checking).
+
+\end{ex}
+
+\begin{ex}
+    Build an application to measure the execution time of \texttt{SetEvent} in the following cases:
+    \begin{itemize}
+        \item fully preemptive scheduling, setting an event to a higher priority tasks that is not waiting for the event.
+        \item fully preemptive scheduling, setting an event to a higher priority tasks that is waiting for the event.
+        \item fully preemptive scheduling, setting an event to a lower priority tasks that is not waiting for the event.
+        \item fully preemptive scheduling, setting an event to a lower priority tasks that is waiting for the event.
+    \end{itemize}
+
+    Explain how to use the timer functions for each case and explain the results.
+\end{ex}
+
+\begin{ex}
+Program an application conforming to the following requirements:
+
+\begin{itemize}
+    \item it is composed of two tasks: \texttt{server} priority 2, \texttt{t1} priority 1.
+    \item \texttt{server} is an infinite loop that activates \texttt{t1} and waits for event \texttt{evt\_1}.
+    \item \texttt{t1} prints ``I am t1'' and sets \texttt{evt\_1} of \texttt{server}.
+\end{itemize}
+
+Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task (for instance writes to the LCD or the LEDs) to verify your schedule.
+\end{ex}
+
+\begin{ex}
+Extend the previous application by adding 2 tasks: \texttt{t2} and \texttt{t3} (priority 1 for both) and 2 events \texttt{evt\_2} and \texttt{evt\_3}. \texttt{server} activates \texttt{t1}, \texttt{t2} and \texttt{t3} and waits for one of the events. When one of the events is set, \texttt{server} activates the corresponding task again.
+
+Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task (for instance writes to the LCD or the LEDs) to verify your schedule.
+\end{ex}
+
+%================================================================
+\chapter{Lab 2 -- Periodic tasks and Alarms}
+
+\section{Goal}
+
+Real-Time systems are reactive systems which have to do processing as a result of events. You have seen in Lab \#1 how to start processing as a result of an internal event of the system: by activating a task (\texttt{ActivateTask} and \texttt{ChainTask} services) or by setting an event (\texttt{SetEvent} service). In this lab, you will trigger processing as a result of time elapsing (expiration of an Alarm). This lab uses the following concepts: alarm and counter. On the lab board, the Systick timer is used as interrupt source for alarms. The interrupt is sent every 1ms.
+
+\section{First application}
+
+This application implements a periodic task that reads switch button B0 of the board every 100ms.
+When switch B0 is open, A3 is turned off.
+When button B0 is closed, A3 is turned on.
+
+\begin{ex}
+    The \texttt{updateStateOfB4} function implements a small state machine to convert the state of the button to states and events.
+    Draw this state machine.
+    Draw a schedule of the application (the execution of the interrupt service routine associated with the Systick will not be represented; it will be assumed to be negligible).
+    Your diagram should show the instants where the state of the switch change as well as the state of A3.
+    Build and execute the application to verify your diagram.
+\end{ex}
+
+Modify the application: when B4 is closed, a processing is triggered.
+This processing is performed by activating a job of task \texttt{t_process} (priority 3) that, on odd executions, turns on LEDS A4 to A8 and on even executions turns them off.
+\begin{ex}
+Draw a schedule of the application.
+Your diagram should show the physical state of the switch as well as the state of the LEDs (associate numbers with the different state and use these numbers in your diagram).
+Build and execute the application to verify your diagram.
+\end{ex}
+
+
+\section{Second application}
+
+The second application will use 2 periodic tasks: \texttt{t1} (priority 2, period 1s) and \texttt{t2} (priority 1, period 1.5s). t1 toggles LED A3 each time it executes and t2 toggles LED A4.
+
+\begin{ex}
+    Draw a schedule of the application that show the 20 first states of the LEDs.
+    What is the global period of the system?
+\end{ex}
+
+The application needs a counter and 2 alarms. Program, build, and run the application.
+
+\section{Third application}
+
+In the third application, alarms, counters, and polling of the switch buttons are mixed.
+This application is a system with 2 switches.
+After startup, the system is waiting.
+When the first switch is closed, the system starts a {\it function}\footnote{Here we mean a function of the application, not a function of the C language.} F that is implemented using a periodic task (period = 1s).
+To ``see'' F, uses a blinking LED.
+When the first switch is opened, function F is stopped.
+When the second switch is closed, the system is shutdown as quickly as possible (ie ShutdownOS\footnote{The ShutdownOS service shutdowns the operating system. All tasks and alarms are stopped. ShutdownOS takes a StatusType argument to specify the kind or error which occurred. In our case use E\_OK as argument.} is called).
+
+\begin{ex}
+    Explain the design of the application: provide the list and configuration of tasks and alarms.
+    Draw schedules showing different executions.
+    Build and execute the application to verify your diagrams.
+\end{ex}
+
+Requirements change. Now function F implementation needs an Init code
+(runs once when F is started) and a Final code (runs once when F is stopped) as shown in the following diagram:
+
+\begin{center}
+    \resizebox{14cm}{!}{%
+\begin{tikzpicture}
+\draw[step=.5cm,gray!20,very thin] (-0.5, -0.5) grid (16.5,1.5);
+\draw [->] (-0.5,0) -- (16,0);
+\node [yshift=-3mm] at (16,0) {time};
+\draw (0,0) rectangle (1.2,1);
+\node at (0.6,0.5) {Init};
+\draw (1.2,0) rectangle (2.7,1);
+\node at (1.95,0.5) {Body};
+\draw (4,0) rectangle (5.5,1);
+\node at (4.75,0.5) {Body};
+\draw (8,0) rectangle (9.5,1);
+\node at (8.75,0.5) {Body};
+\foreach \x in {0, 4}
+  \draw [xshift=\x cm,thick,<->] (0,-0.5) -- (4,-0.5);
+\draw [xshift=8 cm,thick,<-(] (0,-0.5) -- (3,-0.5);
+\draw [xshift=11cm] (0,0) rectangle (1.2,1);
+\node [xshift=11cm] at (0.6,0.5) {Final};
+\node [rectangle callout, fill=green!50, callout absolute pointer={(0,1)}] at (-1,2) {Start request};
+\node [rectangle callout, fill=red!50, callout absolute pointer={(11,1)}] at (12,2) {Stop request};
+\end{tikzpicture}
+} %% resizebox
+\end{center}
+
+
+\begin{ex}
+    Modify the application to take the new requirements into account.
+    Your implementation will use only basic tasks.
+    Each phase of F (Init, Body, and Final) is executed in a different task.
+    Explain the design of the application: provide the list and configuration of tasks and alarms.
+    Draw schedules showing different execution scenarii.
+    Build and execute the application to verify your diagrams.
+\end{ex}
+
+\begin{ex}
+    Same question as above, but your implementation will use an extended task to control the execution of Init, F, and Stop.
+\end{ex}
+
+\section{Fourth application}
+
+In this part, you will implement a watchdog. It is a mechanism that allows to stop a processing or a waiting period once a delay has elapsed.
+
+In your application, each time B0 is closed, B3 must be pressed within 4 seconds. In this case, you print the time between the two occurrences. Otherwise, an error message is displayed. If B0 is closed more than once are within 5 seconds from the first time, these events are ignored.
+
+\begin{ex}
+    Specify this behaviour with a state machine.
+    What is happening if the timeout occurs just after B3 has been closed but before the waiting task got the event?
+    Design and program a solution that handles this situation correctly.
+    Draw a schedule of the behaviour of your application in such a scenario (this schedule should show the state of the alarms).
+\end{ex}
+
+\section{Fifth application}
+
+Program a chase\footnote{chenillard in French} with a 0.5s period. To do so, use 8 periodic tasks. Each periodic task manages a LED. The chase effect is done by using alarms with a time shift between them.
+
+When B0 is closed, the chase starts, when it is opened, it is reset.
+When B3 is closed, the chase stops until B3 is opened.
+When B2 is closed, the chase direction changes (even if it is stopped).
+
+\begin{ex}
+    Specify the high level behaviour with a state machine.
+    Design and program the application.
+    Explain your design.
+\end{ex}
+
+%%================================================================
+\chapter{Lab 3 -- Shared object access protection}
+
+To show resources usage, we will use a bad program that allows to corrupt a shared global variable which is not protected against concurrent writes. This has been presented in the course. This lab will show different ways to prevent this wrong behavior by using resources (standard and internal) or other solutions (preemption and priority).
+
+To ensure that the compiler does not hide our bug, update the value of the \texttt{CFLAGS} key in the OIL file: replace option \texttt{-Os} by \texttt{-O0} to turn off all optimizations.
+
+\section{Application requirements}
+
+The diagram of figure~\ref{fig:appdiag} describes the application.
+It is composed of 3 tasks that share 2 global variables {\bf declared with the volatile keyword}: \texttt{val} and \texttt{activationCount}:
+\begin{itemize}
+\item a background task called \texttt{bgTask}, activated at startup. In an infinite loop it increments then decrements the global variable \texttt{val}. This task has priority 1.
+\item a periodic task called \texttt{periodicTask} that activates a job every 50ms. This periodic task increments the global variable \texttt{activationCount}. If \texttt{activationCount} is odd, \texttt{val} is incremented, otherwise it is decremented. This task has priority 10.
+\item a periodic task \texttt{displayTask} that runs every 2 second and prints \texttt{val} on the LCD. This task has priority 2.
+\end{itemize}
+
+\def\alarm#1#2{
+  \node[alarm](#1) [#2] {};
+  \coordinate (a) at ($(#1.north)$);
+  \coordinate (b) at ($(#1.north east)$);
+  \coordinate (c) at ($(#1.north west)$);
+  \coordinate (d) at ($(#1)$);
+  \draw[thick] ($(a)+(-0.1,0)$) rectangle ($(a)+(0.1,0.1)$);
+  \draw[rotate=-45,thick] ($(b)+(-0.05,0)$) rectangle ($(b)+(0.05,0.1)$);
+  \draw[rotate=45,thick] ($(c)+(-0.05,0)$) rectangle ($(c)+(0.05,0.1)$);
+  \draw ($(d)+(0.3,0)$) -- (d) -- ($(d)+(0,0.3)$);
+  \node [font=\scriptsize,below=0.5mm of #1] {{\em Alarm}}
+}
+
+\def\sharedvar#1#2#3{
+  \node (#1) [#2] {#1};
+  \coordinate (a) at ($(#1.north #3) + (0,0.2)$);
+  \coordinate (b) at ($(#1.south #3) + (0,-0.2)$);
+  \draw[ultra thick] (a) -- (b);
+  \draw ($(a)+(-0.1,0)$) -- ($(a)+(0.1,0)$);
+  \draw ($(b)+(-0.1,0)$) -- ($(b)+(0.1,0)$)
+}
+
+\def\varrect#1{
+  \draw ($(#1.south west)$) rectangle ($(#1.north east)$)
+}
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \begin{tikzpicture}[
+   task/.style={draw,very thick,fill=white,drop shadow={opacity=0.25},text width=2.5cm, text centered, minimum height=1.5cm},
+   alarm/.style={draw,thick,circle,fill=white,drop shadow={opacity=0.25},text width=.5cm}
+   ]
+   \node[task](periodicTask) at (0,0) {periodicTask};
+   \node[task](bgTask) [above=of periodicTask] {bgTask};
+   \node[task](displayTask) [above=of bgTask] {displayTask};
+   \alarm{activateDisplay}{left=20mm of displayTask};
+   \alarm{activatePeriodic}{left=20mm of periodicTask};
+   \sharedvar{val}{left=of bgTask}{east};
+   %\sharedvar{activationCount}{right=of periodicTask}{west};
+   \sharedvar{stdout}{right=of displayTask}{west};
+   \varrect{stdout};
+   \draw [thick,<->] (val.east) -- (bgTask.west);
+   \draw [thick,->] (val.north east) -- ++(5mm,0) |- ($(displayTask.south west) + (0,2mm)$);
+   \draw [thick,<->] (val.south east) -- ++(5mm,0) |- ($(periodicTask.north west) + (0,-2mm)$);
+
+   \draw [thick,->] (activateDisplay.east) -- ++(5mm,0) -- ++(0,1.5mm) -- ++(3mm,-3mm) -- ++ (0mm,1.5mm) -- (displayTask);
+   \node at ($(activateDisplay.east) + (6.5mm,-3mm)$) {2s};
+   \node[font=\scriptsize] at ($(activateDisplay.east) + (9mm,3mm)$) {{\em ActivateTask}};
+   \draw [thick,->] (activatePeriodic.east) -- ++(5mm,0) -- ++(0,1.5mm) -- ++(3mm,-3mm) -- ++ (0mm,1.5mm) -- (periodicTask);
+   \node at ($(activatePeriodic.east) + (6.5mm,-3mm)$) {50ms};
+   \node[font=\scriptsize] at ($(activatePeriodic.east) + (9mm,3mm)$) {{\em ActivateTask}};
+   %\draw [thick,<->] (activationCount.west) -- (periodicTask);
+   %\draw [thick,->] (activationCount.north west) -- ++(-5mm,0) |- ($(displayTask.south east) + (0,2mm)$);
+   \draw [thick,->] (displayTask) -- (stdout);
+   \end{tikzpicture}
+   \caption{Application diagram}
+   \label{fig:appdiag}
+\end{figure}
+
+\begin{ex}
+    Before programming the application, gives the expected sequence of values for val.
+    Design, program, and run the application.
+    Now, decrease gradually the period of task \texttt{periodicTask} and observe the sequence of values of val.
+    Comment.
+\end{ex}
+
+
+%Compile again your application but add a \unixcl{CFLAGS = "-O3"} in the OIL file. This flag
+%makes the C compiler optimize the assembly code.
+
+%\begin{ex}
+%Is it the same behavior as in previous question? Why?
+%\end{ex}
+
+
+
+\section{Global variable protection}
+
+%Remove the \unixcl{CFLAGS = "-O3"} from the OIL file. As shown in the course, we must protect the access to the global variable.
+
+Update the OIL file and the C program to protect the access to the global variable \texttt{val}. Use a resource to do it.
+
+The resource priority is automatically computed by goil according to the priorities of the tasks which use it.
+
+The OIL compiler generates many files in the directory bearing the same name as the oil file (without the .oil suffix). Among them 3 are of interest for this lab:
+\begin{itemize}
+\item \texttt{tpl_app_define.h}
+\item \texttt{tpl_app_config.h}
+\item \texttt{tpl_app_config.c}
+\end{itemize}
+
+The file \texttt{tpl_app_config.c} contains the tasks descriptors among other data structures. These structures are commented.
+
+\begin{ex} ~
+    \begin{itemize}
+        \item
+            Recall the computation rule of the ceiling priority of a resource with the immediate ceiling protocol.
+            According to this rule, what should be the ceiling priority of the resource?
+        \item
+            Find the actual ceiling priority in \texttt{tpl_app_config.c}. Is it the expected value? If not, is it a problem?
+    \end{itemize}
+\end{ex}
+
+%To observe the impact of the priority ceiling protocol, use the following function to observe the priority of the jobs during their execution.
+
+%\begin{lstlisting}[language=C]
+%void displayIdAndCurrentPriority()
+%{
+  %TaskType id;
+  %GetTaskID(&id);
+  %if (id >= 0)
+  %{
+    %tpl_priority prio = (tpl_dyn_proc_table[id]->priority) >> PRIORITY_SHIFT;
+    %lcd.print("Id=");
+    %lcd.print(id);
+    %lcd.print(", Prio=");
+    %lcd.print(prio);
+  %}
+%}
+%\end{lstlisting}
+
+%And you have to add the following line at start of your C file:
+
+%\begin{lstlisting}[language=C]
+ %#include "tpl_os_task_kernel.h"
+%\end{lstlisting}
+
+
+\section{Protection with an internal resource}
+
+An internal resource is automatically taken when the job gets the CPU, and released when it terminates. Replace the standard resource by an internal resource in the OIL file. Remove the \texttt{GetResource} and \texttt{ReleaseResource} in the C file.
+
+\begin{ex}~
+    \begin{itemize}
+        \item
+            What happens? Why?
+        \item
+            How to solve the problem? Draw a schedule of a correct implementation of the system. Program this solution.
+    \end{itemize}
+\end{ex}
+
+
+\section{Protection using a single priority level}
+
+\begin{ex}
+Modify the OIL file: remove the resource and set the priorities so that all tasks share the same priority. Draw a schedule of the system.
+\end{ex}
+
+\section{Protection using fully non preemptive scheduling mode}
+
+\begin{ex}
+Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the system.
+\end{ex}
+
+
+\section{Upgrading the coro\_utils function}
+
+\begin{ex}
+    As explained in section~\ref{sec:coroutils}, both the screen and the IO expander use the SPI interface of the MCU. Thus, to ensure coherency of the transactions, we have avoided using both devices in the same application. Upgrade the current implementations of the functions to solve this problem and design an application that shows the effectiveness of your solution.
+\end{ex}
+
+%%\chapter{Lab4\\Driving servos}
+
+%%The goal of this lab is to build a small application to drive servomotors. Get the lab4 package from \url{http://www.irccyn.ec-nantes.fr/~bechenne/trampoline-labs/}. Inside there are 2 files: \unixcl{servos.h} and \unixcl{servo.cpp}.
+
+%%Update Trampoline by going to the trampoline directory and typing \unixcl{git pull}. Compile goil.
+
+%%\section{How servos work}
+
+%%Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
+
+%%\includegraphics[width=\textwidth]{servopwm.pdf}
+
+%%\section{Servo PWM generation}
+
+%%The board has 2 connectors for servos on the right side just below the LCD. Servos must be connected with the {\bf yellow wire nearby you} as shown on the picture below.
+
+%%\begin{center}
+   %%\includegraphics[scale=0.25]{servoconnection.jpg}
+%%\end{center}
+
+%%The 3.3V regulator of the Teensy is not able to power the servos. We need an external power supply connected to the bigs female banana plugs on the top of the board. Get 2 banana cords and connect them to the power supply and to the board as shown on the picture below.
+
+%%\begin{center}
+   %%\includegraphics[scale=0.25]{powersupply.jpg}
+%%\end{center}
+
+
+
+%%We are going to drive 2 servo. Each servo is driven by a task : \texttt{t_servo0} and \texttt{t_servo1}.
+
+%%\begin{ex}
+%%Program tasks \texttt{t_servo0} and \texttt{t_servo1}. Both tasks are periodic with a 20ms period but are offset by half of the period. \texttt{t_servo0} toggles LED L0-3 and \texttt{t_servo1} toggles LED L1-4. Verify the period using the scope. On the left there is a connector where LED signals are available as well as the GND. Use this connector to connect the scope probes. This connector is shown below
+%%\end{ex}
+
+%%\begin{center}
+   %%\includegraphics[scale=0.25]{connecteurgauche.jpg}
+%%\end{center}
+
+
+
+%%Now instead of toggling the LED, each task will use the function \texttt{pulse}. This function takes 2 arguments. The first one is the \texttt{output}, the second one is the \texttt{duration} of the pulse in $\mu$s.  \texttt{pulse} does not allow values lower than 1000 and greater than 2000 in order to avoid to damage the servo. \texttt{pulse} works as follow: the \texttt{ouput} is set to 1 and a timer of the microcontroller is programmed to generate an interrupt after \texttt{duration} $\mu$s. Since the same timer is used for both tasks, the tasks have to be shifted by at least the maximum duration of the pulse. In your OIL file, you have to declare the ISR which is located in the \texttt{servo.c} file as follow:
+
+%%\begin{lstlisting}
+  %%ISR ftm_timer {
+    %%CATEGORY = 1;
+    %%PRIORITY = 1;
+    %%SOURCE = FTM0_IRQ;
+  %%};
+%%\end{lstlisting}
+
+%%You have to add the \texttt{servo.c} file in the sources of the application  and the fact you use the ftm library in the BUILD attribute of the OS object:
+
+%%\begin{lstlisting}
+      %%APP_SRC = "servo.c";
+      %%LIBRARY = ftm;
+%%\end{lstlisting}
+
+%%\begin{ex}
+%%Modify \texttt{t_servo0} and \texttt{t_servo1} to use \texttt{pulse} and generate a pulse with a width  equal to 1.5ms. Verify the behavior using the scope.
+%%\end{ex}
+
+%%Then change the pins from 3 and 4 to 20 and 21. 20 and 21 correspond to the servo connectors on the right. Connect the servos to the connectors Each servo should go to the average position. Do not forget to program pins 20 an 21 as \texttt{OUTPUT}.
+
+%%\section{Adding high level behavior}
+
+%%Now we want to set the position of each servo. To do that we need 2 tasks, 1 for each servo, that set the position in a global variable, 1 for each servo. The corresponding variable is read by the \texttt{t_servoX} task to drive the servo.
+
+%%\begin{ex}
+%%First we want the position of each servo incremented until it reaches its maximum position (2ms pulse), then decremented until it reaches its minimum position (1ms pulse). So the servo does round trips. The time we want to go from the minimum position to the maximum position is 5s. Assuming the position is incremented and decremented by one, what is the period of theses tasks in counter tick unit ?
+%%\end{ex}
+
+%%Now we want to be able to set the minimum and maximum positions of the servo connected to pin 20. To do that we use buttons.
+
+%%\begin{ex}
+%%Add to the previous application the following features and draw an automaton to model the application:
+
+%%When button P0-8 is pressed, servo connected to pin 20 stops its round-trip. If it is pressed again, round-trip continue. When the round-trip is stopped the following functions are available.
+
+%%When button P4-12 is pressed, the minimum position is selected, servo connected to pin 20 goes to this position. Then push buttons P2-10 decrements the minimum position and P1-9 increments the minimum position.
+
+%%When button P3-11 is pressed, the maximum position is selected, servo connected to pin 20 goes to this position. Then push buttons P2-10 decrements the minimum position and P1-9 increments the minimum position.
+
+%%Minimum position should be kept greater or equal than the position corresponding to the 1ms pulse. Maximum position should be kept lower or equal than the position corresponding to the 2ms pulse. Minimum position should be kept lower or equal than the maximum position.
+
+%%When button P0-8 is pressed, servo connected to pin 20 continues its round-trip and respects the minimum and maximum positions that have been set.
+%%\end{ex}
+
+
+
+
+\end{document}
