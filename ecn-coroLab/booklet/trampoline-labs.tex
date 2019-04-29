@@ -77,26 +77,27 @@ sets the {\tt trampoline} directory as current directory. This assumes the {\tt 
 You will work within a \texttt{dmg} file.
 A \texttt{dmg} is a disk image file, \textsl{i.e.} a file that contains a small filesystem.
 
-Get the \texttt{prets.dmg} file and open it by double clicking on its icon.
-It will open the disk image in the \texttt{/Volumes/PRETS} folder.
+To build a disk image, open a terminal and type the following command:
 
-This disk image contains the following folders:
-\begin{itemize}
-    \item \texttt{trampoline}: a folder that contains the source code of Trampoline RTOS and some other tools, including \texttt{goil}, the OIL compiler.
-    \item \texttt{gcc-arm-none-eabi-8-2018-q4-major}: a folder that contains the gnu compiler toolchain to cross-compile programs for the lab board.
-    \item stlink\ldots \todo{check stlink installation}
-\end{itemize}
+\unixcl{hdiutil\blanc{}create\blanc{}-size\blanc{}900m\blanc{}-fs\blanc{}HFS+\blanc{}-volname\blanc{}PRETS\blanc{}\normaltilde/Desktop/prets.dmg}
 
+To mount the disk image, click on the icon that appeared on the desktop.
+
+Now, you have to download Trampoline RTOS and gcc-arm.
 All these tools are open-source (see the licence of each projet for more details) and are available on the following websites:
-
 \begin{itemize}
-    \item
-        \url{https://github.com/TrampolineRTOS/trampoline}
-    \item
-        \url{https://launchpad.net/gcc-arm-embedded}
-    \item
-        \url{https://github.com/texane/stlink}
+    \item Trampoline RTOS: \url{https://github.com/TrampolineRTOS/trampoline/archive/master.zip}
+    \item gcc-arm (Downloads>MacOSX 64 bit): \url{https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm}
 \end{itemize}
+
+Open the archive and copy the folders to the disk image.
+From now on, it is assumed that:
+\begin{itemize}
+    \item The folder containing Trampoline RTOS is named \texttt{trampoline}.
+    \item The folder containing the cross compiler is named \texttt{gcc-arm-none-eabi8-2018-q4-major}.
+\end{itemize}
+
+To interact with the board, \texttt{stlink} is also required but it is already installed on the workstations.
 
 \section{Building goil}
 
@@ -104,7 +105,7 @@ The first step to have a working configuration is to build \texttt{goil}, the OI
 
 To do so:
 \begin{itemize}
-    \item open a terminal (you can do it by pressing \texttt{Command+Space} and then type \texttt{Terminal} and hit return.
+    \item open a terminal (you can do it by pressing \texttt{Command+Space} and then type \texttt{Terminal} and hit return).
     \item change your working directory by typing the following command in the terminal:
 
 \noindent
@@ -128,7 +129,8 @@ It can be done with the following commands:
 
 \unixcl{echo PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH >>\blanc{}\normaltilde/.profile}
 
-\todo{Check if there is also something to do for stlink}
+It is assumed that the location of the stlink tools are already in the PATH.
+If it is not the case, update your \texttt{.profile}.
 
 The \texttt{.profile} file is parsed by the shell when it starts. To force your current shell instance to read the file, use the following command:
 
@@ -167,7 +169,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \end{verbatim}
 \end{shaded*}
 
-Last, \todo{chec for stlink}
+Last, check that stlink tools are available with the following command: \unixcl{st-info\blanc{}--version}.
+The output should be:
 
 \medskip
 
@@ -175,6 +178,7 @@ Last, \todo{chec for stlink}
 \tiny
 \vspace{-1.7mm}
 \begin{verbatim}
+v1.3.0
 \end{verbatim}
 \end{shaded*}
 
