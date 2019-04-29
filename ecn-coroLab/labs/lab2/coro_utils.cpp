@@ -78,12 +78,12 @@ extern "C" {
         TIM6->EGR |= TIM_EGR_UG; /* take into account PSC update */
     }
 
-    void reset_timer()
+    void resetTimer()
     {
         TIM6->CNT = 0;
     }
 
-    uint32_t get_timer_value()
+    uint32_t getTimerValue()
     {
        return TIM6->CNT;
     }

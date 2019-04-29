@@ -125,9 +125,11 @@ First, you have to inform the system of the location of the tools.
 This is done by setting the {\tt PATH} environment variable in your \texttt{.profile} file.
 It can be done with the following commands:
 
-\unixcl{echo PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH >>\blanc{}\normaltilde/.profile}
+\unixcl{echo "export PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH" >>\blanc{}\normaltilde/.profile}
 
-\unixcl{echo PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH >>\blanc{}\normaltilde/.profile}
+\unixcl{echo "export PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH" >>\blanc{}\normaltilde/.profile}
+
+To get the \normaltilde character on french apple keyboard, you have to use Alt+n.
 
 It is assumed that the location of the stlink tools are already in the PATH.
 If it is not the case, update your \texttt{.profile}.
@@ -331,7 +333,7 @@ In your case, it should be: \texttt{/Volumes/PRETS/trampoline/}.
 
 lab1 is a very simple application with only 1 task called {\tt task1}. It starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and turns on LED A0. Look at the OIL file and the C source file.
 
-To compile this application, go into the lab1 directory and type:
+To compile this application, go into the lab1 directory and type (on a single line):
 
 %\unixcl{\parbox{230\unitlength}{export\blanc{}PATH=\$PATH\textbackslash\\
 %:\normaltilde/trampoline/goil/makefile-macosx\textbackslash\\
@@ -339,7 +341,7 @@ To compile this application, go into the lab1 directory and type:
 %:\normaltilde/Tools/bin}}
 
 \unixcl{\parbox{\linewidth}{%
-goil\blanc{}--target=cortex/armv7em/stm32f303/coroLabBoard\textbackslash\\
+        goil\blanc{}--target=cortex/armv7em/stm32f303/coroLabBoard\blanc{}\\%\textbackslash\\
 --templates=/Volumes/PRETS/trampoline/goil/templates\blanc{}lab1.oil}}
 
 The \texttt{--target} option gives the target system (here we generate the OS level data structures of Trampoline for a \texttt{cortex} core with the \texttt{armv7em} instruction set, a \texttt{stm32f303} micro-controller and the board is the \texttt{coroLabBoard}).
