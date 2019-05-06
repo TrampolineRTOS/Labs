@@ -501,6 +501,8 @@ The \texttt{ChainTask()} system call allows to chain the execution of a task: th
 
 \section{Extended tasks and synchronization using events}
 
+\textcolor{red}{\emph{For the following exercises, you should use full preemptive scheduling mode.}}
+
 Unlike a basic task, an extended task may wait for an event.
 In terms of scheduling, a job is activated when a task is activated or when it leaves the waiting state.
 
@@ -573,14 +575,14 @@ When switch B0 is open, A3 is turned off.
 When button B0 is closed, A3 is turned on.
 
 \begin{ex}
-    The \texttt{updateStateOfB4} function implements a small state machine to convert the state of the button to states and events.
+    The \texttt{updateStateOfB0} function implements a small state machine to convert the state of the button to states and events.
     Draw this state machine.
     Draw a schedule of the application (the execution of the interrupt service routine associated with the Systick will not be represented; it will be assumed to be negligible).
     Your diagram should show the instants where the state of the switch change as well as the state of A3.
     Build and execute the application to verify your diagram.
 \end{ex}
 
-Modify the application: when B4 is closed, a processing is triggered.
+Modify the application: when B0 is closed, a processing is triggered.
 This processing is performed by activating a job of task \texttt{t_process} (priority 3) that, on odd executions, turns on LEDS A4 to A8 and on even executions turns them off.
 \begin{ex}
 Draw a schedule of the application.

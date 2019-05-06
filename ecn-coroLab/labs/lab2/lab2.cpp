@@ -20,7 +20,7 @@ enum switch_events {evOPENED, evCLOSED, evNOTHING};
 typedef enum switch_states t_switch_state;
 typedef enum switch_events t_switch_event;
 
-FUNC(t_switch_event, OS_APPL_CODE) updateStateOfB4()
+FUNC(t_switch_event, OS_APPL_CODE) updateStateOfB0()
 {
     static t_switch_state state = stOPEN;
     t_switch_event event = evNOTHING;
