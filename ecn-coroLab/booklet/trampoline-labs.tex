@@ -575,10 +575,10 @@ When switch B0 is open, A3 is turned off.
 When button B0 is closed, A3 is turned on.
 
 \begin{ex}
-    The \texttt{updateStateOfB0} function implements a small state machine to convert the state of the button to states and events.
+    The \texttt{updateStateOfB0} function implements a small state machine to convert the state of the switch button to states and events.
     Draw this state machine.
     Draw a schedule of the application (the execution of the interrupt service routine associated with the Systick will not be represented; it will be assumed to be negligible).
-    Your diagram should show the instants where the state of the switch change as well as the state of A3.
+    Your diagram should show the instants where the state of the switch changes as well as the state of A3.
     Build and execute the application to verify your diagram.
 \end{ex}
 
@@ -864,6 +864,49 @@ Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the sy
 \begin{ex}
     As explained in section~\ref{sec:coroutils}, both the screen and the IO expander use the SPI interface of the MCU. Thus, to ensure coherency of the transactions, we have avoided using both devices in the same application. Upgrade the current implementations of the functions to solve this problem and design an application that shows the effectiveness of your solution.
 \end{ex}
+
+\chapter{Lab4\\Internal communication}
+
+\section{Overview}
+
+Internal messaging may be used as an easy to use replacement for shared variables. Messaging allows to send data between tasks. This lab will show the different ways to communicate in OSEK.
+
+Design a first simple application with 2 communicating tasks.
+The OIL file declare 2 tasks: \texttt{sender} and \texttt{receiver} and 2 messages: \texttt{outMessage} and \texttt{inMessage}. \texttt{inMessage} is connected to \texttt{outMessage}. Task \texttt{sender} uses \texttt{outMessage} and task \texttt{receiver} uses \texttt{inMessage}.
+
+Task \texttt{sender} is activated every second by the mean of an alarm and sends data to \texttt{outMessage}.
+Send for instance the number of activation of task \texttt{sender}.
+When the data is received in \texttt{inMessage}, the notification mechanism activates task \texttt{receiver}.
+\texttt{receiver} reads the data from \texttt{inMessage} and prints the value.
+
+Notice that message identifiers must be declared before to be used in the source file with \texttt{DeclareMessage}.
+
+\section{Message broadcasting}
+
+OSEK messaging supports \emph{many-to-many} communication. This is done by having more than one receiving messages connected to the same sending message.
+\begin{ex}
+Add 2 other receiving messages connected to \texttt{outMessage}. The first message activates the task \texttt{Emergency} (add the corresponding task), the second message sets an event to task \texttt{NormalOperation} (add the corresponding extended tasks too). Write the C code of the tasks you added. The first one receives the message and prints the value; the second one waits for the event in an infinite loop, receives the message and prints the value. Check the application works as expected.
+\end{ex}
+
+\section{Filtering}
+
+\begin{ex}
+Add a filter to activate task \texttt{receiver} upon the 4th message and then every 3 values (ie 4th, 7th, 11st and so on).
+\end{ex}
+
+\begin{ex}
+    Modify task \texttt{sender} to send  pseudo-random values ranging from 0 to 100 (you can use for instance xorshift32 as described here:\url{https://en.wikipedia.org/wiki/Xorshift}) and then a modulus.
+    Using filtering, set the event to task \texttt{NormalOperation} only if the value is within the range $[20,60]$; activate task \texttt{Emergency} only if the value is not within the range.
+\end{ex}
+
+\section{Queued messages}
+
+
+\begin{ex}
+    Restarting with the Messaging application, modify the \texttt{inMessage} to make it a queued message with a size of 4 data items and remove the notification. Add an alarm to activate task receiver every 4 seconds. Check the return value of \texttt{ReceiveMessage} and verify that no error occurred (queue under- or over-flow). If errors occur, correct the application.
+\end{ex}
+
+
 
 %%\chapter{Lab4\\Driving servos}
 
