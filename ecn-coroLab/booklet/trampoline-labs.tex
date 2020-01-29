@@ -273,28 +273,28 @@ int main()
 
 \section{Goal}
 
-\namedtodo[SF]{Remove ref to \texttt{coro\_utils}, add text on gdb, add \texttt{init.gdb}
-in code.}{The goal of this lab} is to become familiar with OSEK/VDX applications development process and with Trampoline and to understand how fixed priority scheduling works.
+The goal of this lab is to become familiar with the development
+process of application using Trampoline RTOS, and to understand how fixed priority scheduling works.
 We will also see Events.
-Trampoline is a Free Software implementation of the OSEK/VDX specification.
-Trampoline includes an OIL compiler which allows, starting from an OIL description, to generate OS level data structures of the application.
-In addition to the OIL description, the developer must provide the C sources of tasks and ISRs implementing the application.
+
+Trampoline includes an OIL compiler.
+It reads a static description of the objects of the application (tasks,
+ISRs, events, resources, etc.) and generates the corresponding OS data structures.
+In addition to the OIL description, the developer must of course provide the C
+source code of the body of tasks and ISRs.
 
 
 \section{Starting point}
 
-Go into the lab1 directory. There are 4 files:
+Go into the lab1 directory. There are 2 files:
 
 \begin{description}
-    \item[coro\_utils.h] the header file to include to use the functions described in section~\ref{sec:coroutils}.
-    \item[coro\_utils.cpp] the C++ source code of the functions described in section~\ref{sec:coroutils}.
-    \item[lab1.oil] the OIL description of a lab1 application.
-    \item[lab1.cpp] the C++ source code for the lab1.
+    \item[lab1.oil] a minimal OIL description.
+    \item[lab1.cpp] a minimal source code.
 \end{description}
 
-Edit the lab1.oil file and look at the \texttt{TRAMPOLINE\_BASE\_PATH} attribute (in OS $>$ BUILD attribute).
-It should point to the directory where Trampoline is installed.
-In your case, it should be: \texttt{/Volumes/PRETS/trampoline/}.
+Edit the lab1.oil file and update the \texttt{TRAMPOLINE\_BASE\_PATH} attribute
+in function of your configuration: it should point to the directory where Trampoline is installed.
 
 %You should also modify the \texttt{LDFLAGS} lines describing the location of the libraries used by the cross compiler. Set the first line to:
 
@@ -311,7 +311,9 @@ In your case, it should be: \texttt{/Volumes/PRETS/trampoline/}.
 %\end{verbatim}}
 
 
-lab1 is a very simple application with only 1 task called \texttt{task1}. It starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and turns on LED A0. Look at the OIL file and the C source file.
+lab1 is a very simple application with only 1 task named \texttt{task1}. It
+starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and
+turns on LED A0.
 
 To compile this application, go into the lab1 directory and type (on a single line):
 
@@ -320,28 +322,28 @@ To compile this application, go into the lab1 directory and type (on a single li
 %:\normaltilde/Tools/gcc-arm/gcc-arm-none-eabi/bin\textbackslash\\
 %:\normaltilde/Tools/bin}}
 
+\namedtodo[JLB]{update path}
 \unixcl{\parbox{\linewidth}{%
         goil\blanc{}--target=cortex/armv7em/stm32f303/coroLabBoard\blanc{}\\%\textbackslash\\
---templates=/Volumes/PRETS/trampoline/goil/templates\blanc{}lab1.oil}}
+--templates=/path/to/trampoline/goil/templates\blanc{}lab1.oil}}
 
-The \texttt{--target} option gives the target system (here we generate the OS level data structures of Trampoline for a \texttt{cortex} core with the \texttt{armv7em} instruction set, a \texttt{stm32f303} micro-controller and the board is the \texttt{coroLabBoard}).
-The \texttt{--templates} option indicates to Goil where to find the template files used to generate the C code of the configuration of the kernel.
-The OIL file gives the names of the C++ source files (with \texttt{APP_CPPSRC}) and the name of the executable file (with \texttt{APP_NAME}).
+The \texttt{--target} option is used to define the target system (here we generate the OS level data structures of Trampoline for a \texttt{cortex} core with the \texttt{armv7em} instruction set, a \texttt{stm32f303} micro-controller and the board is the \texttt{coroLabBoard}).
+The \texttt{--templates} option indicates where to find the template files used to generate the configuration of the kernel.
 
-Alongside the C files of the kernel configuration, Goil generates a build script for the application (files \texttt{make.py} and \texttt{build.py}).
+Alongside the C files of the kernel configuration, Goil also generates a build script for the application (files \texttt{make.py} and \texttt{build.py}).
 
-If you change something in the OIL file or in your C++ file, you should not need to re-run Goil because the build script will run it when needed.
+If you change something in the OIL file or in your source code file, you do not need to re-run Goil because the build script should run it when needed.
 
 Continue the build process by typing:
 
-\unixcl{./build.py}
+\unixcl{./make.py}
 
 The application and Trampoline OS are compiled and linked together.
 The target file is named \texttt{lab1\_elf}.
 
-To upload the application to the board, check that the board is connected to the computer, then type:
+To upload the application, check that the board is connected to the computer, then type:
 
-\unixcl{./build.py\blanc{}burn}
+\unixcl{./make.py\blanc{}burn}
 
 The following message is displayed (some lines have been truncated to fit on the page):
 
@@ -426,6 +428,20 @@ The \texttt{ActivateTask()} system call allows to activate a task of the applica
     Your diagram must clearly show activation, execution and termination of each job using symbols used in the course.
     Then execute the application and check the correctness of your diagram.
 \end{ex}
+
+\subsubsection{Using the debugger to follow the scheduling}
+\namedtodo[SF]{add text on gdb, add \texttt{init.gdb}
+  in code.}{TODO}
+
+\begin{ex}
+  Run the application step by step with the debugger and follow the scheduling.
+  Identify precisely the preemption point in the code of each tasks.
+\end{ex}
+
+
+\subsubsection{Measuring execution times with a timer}
+
+\namedtodo[SF]{add text on timer API + text on where to use functions}{TODO}
 
 \begin{ex}
     Build an application to measure the execution time of \texttt{ActivateTask} in the following cases:
