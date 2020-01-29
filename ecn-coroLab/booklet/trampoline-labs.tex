@@ -26,6 +26,14 @@
 %\usepackage{adjustbox}
 \usepackage{todonotes}
 
+\newcommand{\namedtodo}[2][]{%
+% initials of the author (optional) + note in the margin
+{%
+\todo[color={yellow!50},size=\small]{%
+\textbf{TODO [\uppercase{#1}]:}~#2}%
+}}
+
+
 \lstset{
   language=C,
   basicstyle=\ttfamily\footnotesize,
@@ -41,7 +49,7 @@
 \newcommand{\unixcl}[1]{\texttt{\fcolorbox{black}{gray!20}{\footnotesize#1}}}
 \newcommand{\blanc}{\fcolorbox{white}{white}{~}}
 \newcommand{\tabkey}{\mbox{$\rightarrow\hspace{-1.4mm}\vert$}}
-\title{PRETS\\Lab booklet\\2018-2019}
+\title{PRETS\\Lab booklet\\2019-2020}
 \author{Jean-Luc B\'echennec, Mikaël Briday, S\'ebastien Faucou}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -58,7 +66,8 @@
 \section{Foreword}
 
 It is assumed that you have a basic knowledge of the command line.
-If it is not the case, make sure to have the first configuration steps checked before to proceed with the labs.
+If it is not the case, make sure to have the first configuration steps checked
+by a member of the teaching team before to proceed with the labs.
 
 \begin{framed}
 Do not copy the commands from the PDF file, the characters you get may not have the correct code and the shell will not understand them.
@@ -71,67 +80,36 @@ When typing shell commands, remember that spaces are important because they sepa
 \unixcl{cd\blanc{}trampoline}
 \end{minipage}
 \begin{minipage}{.7\textwidth}
-sets the {\tt trampoline} directory as current directory. This assumes the {\tt trampoline} directory is a subdirectory of the current one.
+sets the \texttt{trampoline} directory as current directory. This assumes the \texttt{trampoline} directory is a subdirectory of the current one.
 \end{minipage}
-
-You will work within a \texttt{dmg} file.
-A \texttt{dmg} is a disk image file, \textsl{i.e.} a file that contains a small filesystem.
-
-To build a disk image, open a terminal and type the following command:
-
-\unixcl{hdiutil\blanc{}create\blanc{}-size\blanc{}900m\blanc{}-fs\blanc{}HFS+\blanc{}-volname\blanc{}PRETS\blanc{}\normaltilde/Desktop/prets.dmg}
-
-To mount the disk image, click on the icon that appeared on the desktop.
-
-Now, you have to download Trampoline RTOS and gcc-arm.
-All these tools are open-source (see the licence of each projet for more details) and are available on the following websites:
-\begin{itemize}
-    \item Trampoline RTOS: \url{https://github.com/TrampolineRTOS/trampoline/archive/master.zip}
-    \item gcc-arm (Downloads>MacOSX 64 bit): \url{https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm}
-\end{itemize}
-
-Open the archive and copy the folders to the disk image.
-From now on, it is assumed that:
-\begin{itemize}
-    \item The folder containing Trampoline RTOS is named \texttt{trampoline}.
-    \item The folder containing the cross compiler is named \texttt{gcc-arm-none-eabi8-2018-q4-major}.
-\end{itemize}
-
-To interact with the board, \texttt{stlink} is also required but it is already installed on the workstations.
-
-\section{Building goil}
-
-The first step to have a working configuration is to build \texttt{goil}, the OIL compiler.
-
-To do so:
-\begin{itemize}
-    \item open a terminal (you can do it by pressing \texttt{Command+Space} and then type \texttt{Terminal} and hit return).
-    \item change your working directory by typing the following command in the terminal:
-
-\noindent
-\unixcl{cd\blanc{}/Volumes/PRETS/trampoline/goil/makefile-macosx}
-
-    \item build \texttt{goil} by typing the following command in the terminal:
-
-\unixcl{./build.py}
-
-
-\end{itemize}
 
 \section{Setting up the environment}
 
+The tools that we will use have already been installed on the machine:
+
+\begin{itemize}
+  \item Trampoline RTOS and the \texttt{goil} configuration generator;
+
+  \item \texttt{arm-none-eabi-gcc toolchain} including among other tools a c
+    compiler and a c debugger;
+
+  \item \texttt{stlink}, a set of tools to interact with the STM32F303 microcontroller.
+\end{itemize}
+
+
 In order to be able to use the tools, you have to define the configuration of your development environment.
 First, you have to inform the system of the location of the tools.
-This is done by setting the {\tt PATH} environment variable in your \texttt{.profile} file.
-It can be done with the following commands:
+This is done by setting the \texttt{PATH} environment variable in your \texttt{.profile} file.
+\namedtodo[JLB]{Update path to reflect new locations}It can be done with the following commands:
 
-\unixcl{echo "export PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH" >>\blanc{}\normaltilde/.profile}
+\unixcl{echo\blanc{}"export\blanc{}PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH" \blanc{}>>\blanc{}\normaltilde/.profile}
 
-\unixcl{echo "export PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH" >>\blanc{}\normaltilde/.profile}
 
-To get the \normaltilde character on french apple keyboard, you have to use Alt+n.
+\unixcl{echo\blanc{}"export \blanc{}PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH"\blanc{}>>\blanc{}\normaltilde/.profile}
 
-It is assumed that the location of the stlink tools are already in the PATH.
+To get the \normaltilde~character on french apple keyboard, you have to use Alt+n.
+
+It is assumed that the location of the\texttt{stlink} tools are already in the PATH.
 If it is not the case, update your \texttt{.profile}.
 
 The \texttt{.profile} file is parsed by the shell when it starts. To force your current shell instance to read the file, use the following command:
@@ -147,7 +125,7 @@ The command \unixcl{goil\blanc{}--version} should print:
 \medskip
 
 \begin{shaded*}
-\tiny
+\scriptsize
 \vspace{-1.7mm}
 \begin{verbatim}
 goil : 3.1.9, build with GALGAS 3.3.11
@@ -156,28 +134,28 @@ No warning, no error.
 \end{shaded*}
 
 Then check that \texttt{gcc-arm} is also working.
-The commande \unixcl{arm-none-eabi-gcc\blanc{}--version} should print:
+The command \unixcl{arm-none-eabi-gcc\blanc{}--version} should print:
 
 \medskip
 
 \begin{shaded*}
-\tiny
+\scriptsize
 \vspace{-1.7mm}
 \begin{verbatim}
-arm-none-eabi-gcc (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
+arm-none-eabi-gcc (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 [...]
 Copyright (C) 2018 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \end{verbatim}
 \end{shaded*}
 
-Last, check that stlink tools are available with the following command: \unixcl{st-info\blanc{}--version}.
+Last, check that \texttt{stlink} tools are available with the following command: \unixcl{st-info\blanc{}--version}.
 The output should be:
 
 \medskip
 
 \begin{shaded*}
-\tiny
+\scriptsize
 \vspace{-1.7mm}
 \begin{verbatim}
 v1.3.0
@@ -215,7 +193,8 @@ Connect a USB  port to the MCU USB plug and the board switches on.
 \section{The \texttt{coro_utils} functions}
 \label{sec:coroutils}
 
-A set of functions are provided to use the LCD, the I/O extender, and one of the embedded timer.
+\namedtodo[MB]{Update section to reflect integration of functions through
+  \texttt{setupBoard}.}{A set of functions} are provided to use the LCD, the I/O extender, and one of the embedded timer.
 The source code of these functions is provided in the \texttt{coro_utils.cpp} file.
 Some of them are documented below.
 
@@ -294,7 +273,8 @@ int main()
 
 \section{Goal}
 
-The goal of this lab is to become familiar with OSEK/VDX applications development process and with Trampoline and to understand how fixed priority scheduling works.
+\namedtodo[SF]{Remove ref to \texttt{coro\_utils}, add text on gdb, add \texttt{init.gdb}
+in code.}{The goal of this lab} is to become familiar with OSEK/VDX applications development process and with Trampoline and to understand how fixed priority scheduling works.
 We will also see Events.
 Trampoline is a Free Software implementation of the OSEK/VDX specification.
 Trampoline includes an OIL compiler which allows, starting from an OIL description, to generate OS level data structures of the application.
@@ -331,7 +311,7 @@ In your case, it should be: \texttt{/Volumes/PRETS/trampoline/}.
 %\end{verbatim}}
 
 
-lab1 is a very simple application with only 1 task called {\tt task1}. It starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and turns on LED A0. Look at the OIL file and the C source file.
+lab1 is a very simple application with only 1 task called \texttt{task1}. It starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and turns on LED A0. Look at the OIL file and the C source file.
 
 To compile this application, go into the lab1 directory and type (on a single line):
 
@@ -348,7 +328,7 @@ The \texttt{--target} option gives the target system (here we generate the OS le
 The \texttt{--templates} option indicates to Goil where to find the template files used to generate the C code of the configuration of the kernel.
 The OIL file gives the names of the C++ source files (with \texttt{APP_CPPSRC}) and the name of the executable file (with \texttt{APP_NAME}).
 
-Alongside the C files of the kernel configuration, Goil generates a build script for the application (files {\tt make.py} and {\tt build.py}).
+Alongside the C files of the kernel configuration, Goil generates a build script for the application (files \texttt{make.py} and \texttt{build.py}).
 
 If you change something in the OIL file or in your C++ file, you should not need to re-run Goil because the build script will run it when needed.
 
