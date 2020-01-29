@@ -14,12 +14,12 @@ IMPLEMENTATION trampoline {
 
 CPU lab2 {
 	OS config {
-		STATUS = EXTENDED;
-		PAINT_STACK = TRUE;
-		PAINT_REGISTERS = TRUE;
+		STATUS = TRUE;
+		PAINT_STACK = FALSE;
+		PAINT_REGISTERS = FALSE;
 
 		BUILD = TRUE {
-			TRAMPOLINE_BASE_PATH = "../../../../../trampoline";
+			TRAMPOLINE_BASE_PATH = "/path/to/trampoline";
 			APP_CPPSRC = "./lab2.cpp";
 			APP_CPPSRC = "./coro_utils.cpp";
 			APP_NAME = "lab2.elf";

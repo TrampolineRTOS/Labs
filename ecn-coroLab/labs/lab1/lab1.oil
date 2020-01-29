@@ -15,11 +15,11 @@ IMPLEMENTATION trampoline {
 CPU lab1 {
 	OS config {
 		STATUS = EXTENDED;
-		PAINT_STACK = TRUE;
-		PAINT_REGISTERS = TRUE;
+		PAINT_STACK = FALSE;
+		PAINT_REGISTERS = FALSE;
 
 		BUILD = TRUE {
-			TRAMPOLINE_BASE_PATH = "../../../../../trampoline";
+			TRAMPOLINE_BASE_PATH = "/path/to/trampoline";
 			APP_CPPSRC = "./lab1.cpp";
 			APP_CPPSRC = "./coro_utils.cpp";
 			APP_NAME = "lab1.elf";
@@ -54,5 +54,12 @@ CPU lab1 {
 		ACTIVATION = 1;
 		SCHEDULE = FULL;
 	};
-};
 
+    TASK task2 {
+		PRIORITY = 3;
+		AUTOSTART = FALSE;
+		ACTIVATION = 1;
+		SCHEDULE = FULL;
+	};
+
+};
