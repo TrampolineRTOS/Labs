@@ -294,19 +294,19 @@ Users should not create instance of this class as a singleton instance named \te
 Among the funciton provided by the driver, we will use:
 
 \begin{description}
-    \item[void digitalWrite(\textit{port p}, \textit{uint8\_t bitNum, bool value})] sets the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}) to value \textit{value} (0 or 1).
+    \item[void ioExt.digitalWrite(\textit{port p}, \textit{uint8\_t bitNum, bool value})] sets the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}) to value \textit{value} (0 or 1).
 
-    \item[uint8\_t digitalRead(\textit{port p}, \textit{uint8\_t bitNum})] returns the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
+    \item[uint8\_t ioExt.digitalRead(\textit{port p}, \textit{uint8\_t bitNum})] returns the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
 
-    \item[void digitalToggle(\textit{port p}, \textit{uint8\_t bitNum})] toggles the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
+    \item[void ioExt.digitalToggle(\textit{port p}, \textit{uint8\_t bitNum})] toggles the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
 
-    \item[void setBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to HIGH.
+    \item[void ioExt.setBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to HIGH.
 
-    \item[void clearBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to LOW.
+    \item[void ioExt.clearBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to LOW.
 
-    \item[void writeBits(\textit{port p}, \textit{uint8\_t val})] overwrites values of bits of \textit{p} with \textit{val}.
+    \item[void ioExt.writeBits(\textit{port p}, \textit{uint8\_t val})] overwrites values of bits of \textit{p} with \textit{val}.
 
-    \item[uint8_t readBits(\textit{port p})] returns the values of bits of \textit{p}.
+    \item[uint8_t ioExt.readBits(\textit{port p})] returns the values of bits of \textit{p}.
 \end{description}
 
 As an illustration, the following code turn on LED 0 and toggles LED 1.
@@ -394,10 +394,10 @@ To compile this application, go into the lab1 directory and type (on a single li
 %:\normaltilde/Tools/gcc-arm/gcc-arm-none-eabi/bin\textbackslash\\
 %:\normaltilde/Tools/bin}}
 
-\namedtodo[JLB]{update path}
+%\namedtodo[JLB]{update path}
 \unixcl{\parbox{\linewidth}{%
         goil\blanc{}--target=cortex/armv7em/stm32f303/coroLabBoard\blanc{}\\%\textbackslash\\
---templates=/path/to/trampoline/goil/templates\blanc{}lab1.oil}}
+--templates=/opt/trampoline/goil/templates\blanc{}lab1.oil}}
 
 The \texttt{--target} option is used to define the target system (here we generate the OS level data structures of Trampoline for a \texttt{cortex} core with the \texttt{armv7em} instruction set, a \texttt{stm32f303} micro-controller and the board is the \texttt{coroLabBoard}).
 The \texttt{--templates} option indicates where to find the template files used to generate the configuration of the kernel.
@@ -501,19 +501,19 @@ The \texttt{ActivateTask()} system call allows to activate a task of the applica
     Then execute the application and check the correctness of your diagram.
 \end{ex}
 
-\subsubsection{Using the debugger to follow the scheduling}
-\namedtodo[SF]{add text on gdb, add \texttt{init.gdb}
-  in code.}{TODO}
-
-\begin{ex}
-  Run the application step by step with the debugger and follow the scheduling.
-  Identify precisely the preemption point in the code of each tasks.
-\end{ex}
+%\subsubsection{Using the debugger to follow the scheduling}
+%\namedtodo[SF]{add text on gdb, add \texttt{init.gdb}
+%  in code.}{TODO}
+%
+%\begin{ex}
+%  Run the application step by step with the debugger and follow the scheduling.
+%  Identify precisely the preemption point in the code of each tasks.
+%\end{ex}
 
 
 \subsubsection{Measuring execution times with a timer}
 
-\namedtodo[SF]{add text on timer API + text on where to use functions}{TODO}
+%\namedtodo[SF]{add text on timer API + text on where to use functions}{TODO}
 
 \begin{ex}
     Build an application to measure the execution time of \texttt{ActivateTask} in the following cases:
