@@ -19,14 +19,11 @@ CPU lab1 {
     PAINT_REGISTERS = TRUE;
 
     BUILD = TRUE {
-      TRAMPOLINE_BASE_PATH = "/Users/jlb/Develop/trampoline-maintenance";
-      APP_CPPSRC = "./lab1.cpp";
-      APP_CPPSRC = "./coro_utils.cpp";
+      TRAMPOLINE_BASE_PATH = "/opt/trampoline";
+      APP_CPPSRC = "lab1.cpp";
       APP_NAME = "lab1.elf";
       CFLAGS = "-Os -fstack-usage -Wno-strict-aliasing";
-      LIBRARY = tft;
-      LIBRARY = IOExpander;
-      LIBRARY = IO;
+      LIBRARY = coroBoard;
       LDFLAGS = "-Map=lab1.map";
       COMPILER = "arm-none-eabi-gcc";
       CPPCOMPILER = "arm-none-eabi-g++";
@@ -51,13 +48,6 @@ CPU lab1 {
     AUTOSTART = TRUE {
       APPMODE = AppStd;
     };
-    ACTIVATION = 1;
-    SCHEDULE = FULL;
-  };
-
-  TASK task2 {
-    PRIORITY = 3;
-    AUTOSTART = FALSE;
     ACTIVATION = 1;
     SCHEDULE = FULL;
   };

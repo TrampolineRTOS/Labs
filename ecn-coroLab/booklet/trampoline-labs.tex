@@ -97,27 +97,29 @@ The tools that we will use have already been installed on the machine:
 \end{itemize}
 
 
-In order to be able to use the tools, you have to define the configuration of your development environment.
-First, you have to inform the system of the location of the tools.
-This is done by setting the \texttt{PATH} environment variable in your \texttt{.profile} file.
-\namedtodo[JLB]{Update path to reflect new locations}It can be done with the following commands:
+Trampoline is installed in \unixcl{/opt/trampoline}. \texttt{goil} configuration generator is installed in \unixcl{/usr/local/bin}. The toolchain and \texttt{stlink}, the tool used to download binaries on the board, are installed in \unixcl{/opt}. All the usefull paths are set in the \unixcl{.profile} startup file of your account.
 
-\unixcl{echo\blanc{}"export\blanc{}PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH" \blanc{}>>\blanc{}\normaltilde/.profile}
-
-
-\unixcl{echo\blanc{}"export \blanc{}PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH"\blanc{}>>\blanc{}\normaltilde/.profile}
-
-To get the \normaltilde~character on french apple keyboard, you have to use Alt+n.
-
-It is assumed that the location of the\texttt{stlink} tools are already in the PATH.
-If it is not the case, update your \texttt{.profile}.
-
-The \texttt{.profile} file is parsed by the shell when it starts. To force your current shell instance to read the file, use the following command:
-
-\unixcl{source\blanc{}\normaltilde/.profile}
-
-This will enable the configuration in the terminal where you typed the command.
-In order to have the configuration active in all terminals, you have to log out and then log in the system.
+%In order to be able to use the tools, you have to define the configuration of your development environment.
+%First, you have to inform the system of the location of the tools.
+%This is done by setting the \texttt{PATH} environment variable in your \texttt{.profile} file.
+%\namedtodo[JLB]{Update path to reflect new locations}It can be done with the following commands:
+%
+%\unixcl{echo\blanc{}"export\blanc{}PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH" \blanc{}>>\blanc{}\normaltilde/.profile}
+%
+%
+%\unixcl{echo\blanc{}"export \blanc{}PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH"\blanc{}>>\blanc{}\normaltilde/.profile}
+%
+%To get the \normaltilde~character on french apple keyboard, you have to use Alt+n.
+%
+%It is assumed that the location of the\texttt{stlink} tools are already in the PATH.
+%If it is not the case, update your \texttt{.profile}.
+%
+%The \texttt{.profile} file is parsed by the shell when it starts. To force your current shell instance to read the file, use the following command:
+%
+%\unixcl{source\blanc{}\normaltilde/.profile}
+%
+%This will enable the configuration in the terminal where you typed the command.
+%In order to have the configuration active in all terminals, you have to log out and then log in the system.
 
 Now, check that \texttt{goil} is working.
 The command \unixcl{goil\blanc{}--version} should print:

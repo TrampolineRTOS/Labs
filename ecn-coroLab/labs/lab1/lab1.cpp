@@ -1,15 +1,9 @@
 #include "tpl_os.h"
-
-#ifdef __cplusplus
- extern "C" {
-#endif /* __cplusplus */
-#include "coro_utils.h"
+#include "mcp23s17.h"
 
 FUNC(int, OS_APPL_CODE) main(void)
 {
-    setupIOExtender();
-    setupDisplay();
-    setupTimer();
+    initCoroBoard();
     StartOS(OSDEFAULTAPPMODE);
     return 0;
 }
@@ -22,15 +16,3 @@ TASK(task1)
 }
 
 
-/*
- *  * This is necessary for ST libraries
- *   */
-FUNC(void, OS_CODE) assert_failed(uint8_t* file, uint32_t line)
-{
-}
-
-extern "C" void __cxa_pure_virtual() { while (1); }
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
