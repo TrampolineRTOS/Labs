@@ -268,7 +268,7 @@ Some of them are documented below. For the TFT LCD display, an object, \lstinlin
      \item[void initCoroBoard()] initializes the GPIO and the SPI according to the hardware of the board.
 %    \item[void setupIOExtender()] sets up the I/O expander. This function has to be called once, before to use the functions of the I/O Extender driver (see below).
 %    \item[void setupDisplay()] sets up the display. This function has to be called once, before to use the printing functions.
-    \item[void Tft.eraseDisplay()] erases the TFT display.
+    \item[void Tft.erase()] erases the TFT display.
     \item[void Tft.setTextCursor(\textit{const unsigned int col}, \textit{const unsigned int line})] set the location of the text cursor. \textit{col} argument ranges from 0 to 21 and \textit{line} argument ranges from 0 to 8.
     \item[void Tft.print(\textit{any type})] prints at the current cursor location. 
     \item[void Tft.println(\textit{any type})] same as above and goes at the beginning of the next line. 
