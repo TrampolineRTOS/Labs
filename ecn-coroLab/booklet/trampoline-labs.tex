@@ -581,16 +581,16 @@ Before to proceed with the following questions, consult the slides of the course
 \begin{ex}
      Based on the application of Question~1, build an application with the following characteristics:
 \begin{itemize}
-    \item set priority of \texttt{task1} to 8;
-    \item add two events, \texttt{evt\_1} and \texttt{evt\_2}:
+    \item set priority of \texttt{task2} to 8 (so priorities are 1 for \texttt{task1} and 8 for both \texttt{task2} and \texttt{task3});
+    \item add two events, \texttt{evt\_2} and \texttt{evt\_3}:
         \begin{itemize}
-            \item \texttt{evt\_1} is set by task \texttt{task0} to task \texttt{task1}.
-            \item \texttt{evt\_2} is set by task \texttt{task0} to task \texttt{task2}.
+            \item \texttt{evt\_2} is set by task \texttt{task1} to task \texttt{task2}.
+            \item \texttt{evt\_3} is set by task \texttt{task1} to task \texttt{task3}.
         \end{itemize}
     \item modify the code of the tasks:
         \begin{itemize}
-            \item task \texttt{task0} activates \texttt{task1} and \texttt{task2} then sets \texttt{evt\_1} and \texttt{evt\_2} before to terminate.
-            \item tasks \texttt{task1} and \texttt{task2} wait for their event, clear it, and terminate.
+            \item task \texttt{task1} activates \texttt{task2} and \texttt{task3} then sets \texttt{evt\_2} and \texttt{evt\_3} before to terminate.
+            \item tasks \texttt{task2} and \texttt{task3} wait for their event, clear it, and terminate.
         \end{itemize}
 \end{itemize}
 
