@@ -933,7 +933,12 @@ Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the sy
 \section{Upgrading the coro\_utils function}
 
 \begin{ex}
-    As explained in section~\ref{sec:coroutils}, both the screen and the IO expander use the SPI interface of the MCU. Thus, to ensure coherency of the transactions, we have avoided using both devices in the same application. Upgrade the current implementations of the functions to solve this problem and design an application that shows the effectiveness of your solution.
+    As explained in section~\ref{sec:coroutils}, both the screen and the IO
+    expander use the SPI interface of the MCU. Thus, to ensure coherency of SPI
+    transactions, we have avoided using both devices in the same application.
+    However, using resources, it is possible to enforce mutual exclusions
+    between concurrent tasks that use the SPI.
+    Design and program such an application.
 \end{ex}
 
 \chapter{Lab4\\Internal communication}
