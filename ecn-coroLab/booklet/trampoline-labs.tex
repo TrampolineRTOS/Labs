@@ -1027,7 +1027,13 @@ Then connect the servo, it should go to the average position.
 Now we want to set the position of the servo. To do that we need 1 more task that sets the position in a global variable. The corresponding variable is read by the \texttt{t_servo} task to drive the servo.
 
 \begin{ex}
-First we want the position of the servo incremented until it reaches its maximum position (2ms pulse), then decremented until it reaches its minimum position (1ms pulse). So the servo does round trips. The time we want to go from the minimum position to the maximum position is 5s. Assuming the position is incremented and decremented by one, what is the period of theses tasks in counter tick unit ?
+First we want the position of the servo incremented until it reaches its maximum
+position (2ms pulse), then decremented until it reaches its minimum position
+(1ms pulse). So the servo does round trips. The time to go from the
+minimum position to the maximum position is 5s. Assuming the position is
+incremented and decremented by one, what is the period of this task in
+counter tick unit?
+Program the resulting application.
 \end{ex}
 
 Now we want to be able to set the minimum and maximum positions of the servo. To do that we use buttons.
@@ -1035,18 +1041,16 @@ Now we want to be able to set the minimum and maximum positions of the servo. To
 \begin{ex}
 Add to the previous application the following features and draw an automaton to model the application:
 
-When button B4 is pressed, the servo stops its round-trip. If it is pressed again, round-trip continue. When the round-trip is stopped the following functions are available:
+When button B4 is pressed, the servo stops its round-trip. Then (when round-trip is stopped), the following functions are available:
 
 When DIP switch B0 is ON, the minimum position is selected, the servo goes to this position. Then push buttons B7 decrements the minimum position and B5 increments the minimum position.
 
 When DIP switch B0 is OFF, the maximum position is selected, the servo goes to this position. Then push buttons B7 decrements the maximum position and B5 increments the maximum position.
 
-Minimum position should be kept greater or equal than the position corresponding to the 1ms pulse. Maximum position should be kept lower or equal than the position corresponding to the 2ms pulse. Minimum position should be kept lower or equal than the maximum position.
+Minimum position should be kept greater than or equal to the position corresponding to the 1ms pulse. Maximum position should be kept lower than or equal to the position corresponding to the 2ms pulse. Minimum position should be kept lower than or equal to the maximum position.
 
-When button B4 is pressed again, the servo continues its round-trip and respects the minimum and maximum positions that have been set.
+When button B4 is pressed again, the servo resumes its round-trip within the minimum and maximum positions that have been set.
+
 \end{ex}
-
-
-
 
 \end{document}
