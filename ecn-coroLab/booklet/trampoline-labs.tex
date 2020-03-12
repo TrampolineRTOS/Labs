@@ -976,92 +976,72 @@ Add a filter to activate task \texttt{receiver} upon the 4th message and then ev
 
 
 
-%%\chapter{Lab4\\Driving servos}
+\chapter{Lab5\\Driving servos}
 
-%%The goal of this lab is to build a small application to drive servomotors. Get the lab4 package from \url{http://www.irccyn.ec-nantes.fr/~bechenne/trampoline-labs/}. Inside there are 2 files: \unixcl{servos.h} and \unixcl{servo.cpp}.
+The goal of this lab is to build a small application to drive a servomotor. Get the \texttt{servo_start} package from \url{https://github.com/TrampolineRTOS/Labs}.
 
-%%Update Trampoline by going to the trampoline directory and typing \unixcl{git pull}. Compile goil.
+\section{How servos work}
 
-%%\section{How servos work}
+Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
 
-%%Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
+\includegraphics[width=\textwidth]{servopwm.pdf}
 
-%%\includegraphics[width=\textwidth]{servopwm.pdf}
+\section{Servo PWM generation}
 
-%%\section{Servo PWM generation}
+The board has a 3 pins connectors for servos on the back side between the external power supply connector and the pair of white JST connectors. There is one symbol per pin: $-$, $+$ and \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);}. The Servos must be connected with the {\bf yellow wire} on the \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin and the {\bf black wire} on the $-$ pin. as shown on the picture below.
 
-%%The board has 2 connectors for servos on the right side just below the LCD. Servos must be connected with the {\bf yellow wire nearby you} as shown on the picture below.
+\begin{center}
+   \includegraphics[scale=0.25]{servoconnection.jpg}
+\end{center}
 
-%%\begin{center}
-   %%\includegraphics[scale=0.25]{servoconnection.jpg}
-%%\end{center}
+The 3.3V regulator of the Nucleo BB is not able to power the servo. We need an external power supply connected to the black power supply connector on the back of the board. Get a power supply cord and connect it to the power supply (9V) and to the board.
 
-%%The 3.3V regulator of the Teensy is not able to power the servos. We need an external power supply connected to the bigs female banana plugs on the top of the board. Get 2 banana cords and connect them to the power supply and to the board as shown on the picture below.
+We are going to drive 1 servo with a task named \texttt{t_servo}.
 
-%%\begin{center}
-   %%\includegraphics[scale=0.25]{powersupply.jpg}
-%%\end{center}
-
-
-
-%%We are going to drive 2 servo. Each servo is driven by a task : \texttt{t_servo0} and \texttt{t_servo1}.
-
-%%\begin{ex}
-%%Program tasks \texttt{t_servo0} and \texttt{t_servo1}. Both tasks are periodic with a 20ms period but are offset by half of the period. \texttt{t_servo0} toggles LED L0-3 and \texttt{t_servo1} toggles LED L1-4. Verify the period using the scope. On the left there is a connector where LED signals are available as well as the GND. Use this connector to connect the scope probes. This connector is shown below
-%%\end{ex}
-
-%%\begin{center}
-   %%\includegraphics[scale=0.25]{connecteurgauche.jpg}
-%%\end{center}
+\begin{ex}
+Program task \texttt{t_servo}. \texttt{t_servo} is periodic with a 20ms period. \texttt{t_servo} toggles the green LED, D1 (D3) (PORTB 0\footnote{Use digitalToggle(PORTB, 0).}). Verify the period using the scope\footnote{Plug a wire from the ground of the probe into the leftmost black connector terminal (labelled GND) and touch the LED left terminal with the probe.}.
+\end{ex}
 
 
+Now instead of toggling the LED, \texttt{t_servo} will use the function \texttt{setServoPulse}. This function takes 1 argument, the \texttt{duration} of the pulse in $\mu$s.  \texttt{setServoPulse} does not allow values lower than 1000 and greater than 2000 in order to avoid to damage the servo. \texttt{setServoPulse} works as follow: the \texttt{ouput} is set to 1 and a timer of the microcontroller is programmed to generate an interrupt after \texttt{duration} $\mu$s. In your OIL file, an ISR which is located in the \texttt{servo.c} file is defined as follow:
 
-%%Now instead of toggling the LED, each task will use the function \texttt{pulse}. This function takes 2 arguments. The first one is the \texttt{output}, the second one is the \texttt{duration} of the pulse in $\mu$s.  \texttt{pulse} does not allow values lower than 1000 and greater than 2000 in order to avoid to damage the servo. \texttt{pulse} works as follow: the \texttt{ouput} is set to 1 and a timer of the microcontroller is programmed to generate an interrupt after \texttt{duration} $\mu$s. Since the same timer is used for both tasks, the tasks have to be shifted by at least the maximum duration of the pulse. In your OIL file, you have to declare the ISR which is located in the \texttt{servo.c} file as follow:
+\begin{lstlisting}
+  ISR isr_timer_7 {
+    CATEGORY = 1;
+    PRIORITY = 10;
+    SOURCE = TIM7_IRQ;
+  };
+\end{lstlisting}
 
-%%\begin{lstlisting}
-  %%ISR ftm_timer {
-    %%CATEGORY = 1;
-    %%PRIORITY = 1;
-    %%SOURCE = FTM0_IRQ;
-  %%};
-%%\end{lstlisting}
+\begin{ex}
+Modify \texttt{t_servo} to use \texttt{setServoPulse} and generate a pulse with a width  equal to 1.5ms. Verify the behavior using the scope\footnote{Plug a wire from the ground of the probe into the leftmost black connector terminal (labelled GND) and touch \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin with the probe.}.
+\end{ex}
 
-%%You have to add the \texttt{servo.c} file in the sources of the application  and the fact you use the ftm library in the BUILD attribute of the OS object:
+Then connect the servo, it should go to the average position.
 
-%%\begin{lstlisting}
-      %%APP_SRC = "servo.c";
-      %%LIBRARY = ftm;
-%%\end{lstlisting}
+\section{Adding high level behavior}
 
-%%\begin{ex}
-%%Modify \texttt{t_servo0} and \texttt{t_servo1} to use \texttt{pulse} and generate a pulse with a width  equal to 1.5ms. Verify the behavior using the scope.
-%%\end{ex}
+Now we want to set the position of the servo. To do that we need 1 more task that sets the position in a global variable. The corresponding variable is read by the \texttt{t_servo} task to drive the servo.
 
-%%Then change the pins from 3 and 4 to 20 and 21. 20 and 21 correspond to the servo connectors on the right. Connect the servos to the connectors Each servo should go to the average position. Do not forget to program pins 20 an 21 as \texttt{OUTPUT}.
+\begin{ex}
+First we want the position of the servo incremented until it reaches its maximum position (2ms pulse), then decremented until it reaches its minimum position (1ms pulse). So the servo does round trips. The time we want to go from the minimum position to the maximum position is 5s. Assuming the position is incremented and decremented by one, what is the period of theses tasks in counter tick unit ?
+\end{ex}
 
-%%\section{Adding high level behavior}
+Now we want to be able to set the minimum and maximum positions of the servo. To do that we use buttons.
 
-%%Now we want to set the position of each servo. To do that we need 2 tasks, 1 for each servo, that set the position in a global variable, 1 for each servo. The corresponding variable is read by the \texttt{t_servoX} task to drive the servo.
+\begin{ex}
+Add to the previous application the following features and draw an automaton to model the application:
 
-%%\begin{ex}
-%%First we want the position of each servo incremented until it reaches its maximum position (2ms pulse), then decremented until it reaches its minimum position (1ms pulse). So the servo does round trips. The time we want to go from the minimum position to the maximum position is 5s. Assuming the position is incremented and decremented by one, what is the period of theses tasks in counter tick unit ?
-%%\end{ex}
+When button B4 is pressed, the servo stops its round-trip. If it is pressed again, round-trip continue. When the round-trip is stopped the following functions are available:
 
-%%Now we want to be able to set the minimum and maximum positions of the servo connected to pin 20. To do that we use buttons.
+When DIP switch B0 is ON, the minimum position is selected, the servo goes to this position. Then push buttons B7 decrements the minimum position and B5 increments the minimum position.
 
-%%\begin{ex}
-%%Add to the previous application the following features and draw an automaton to model the application:
+When DIP switch B0 is OFF, the maximum position is selected, the servo goes to this position. Then push buttons B7 decrements the maximum position and B5 increments the maximum position.
 
-%%When button P0-8 is pressed, servo connected to pin 20 stops its round-trip. If it is pressed again, round-trip continue. When the round-trip is stopped the following functions are available.
+Minimum position should be kept greater or equal than the position corresponding to the 1ms pulse. Maximum position should be kept lower or equal than the position corresponding to the 2ms pulse. Minimum position should be kept lower or equal than the maximum position.
 
-%%When button P4-12 is pressed, the minimum position is selected, servo connected to pin 20 goes to this position. Then push buttons P2-10 decrements the minimum position and P1-9 increments the minimum position.
-
-%%When button P3-11 is pressed, the maximum position is selected, servo connected to pin 20 goes to this position. Then push buttons P2-10 decrements the minimum position and P1-9 increments the minimum position.
-
-%%Minimum position should be kept greater or equal than the position corresponding to the 1ms pulse. Maximum position should be kept lower or equal than the position corresponding to the 2ms pulse. Minimum position should be kept lower or equal than the maximum position.
-
-%%When button P0-8 is pressed, servo connected to pin 20 continues its round-trip and respects the minimum and maximum positions that have been set.
-%%\end{ex}
+When button B4 is pressed again, the servo continues its round-trip and respects the minimum and maximum positions that have been set.
+\end{ex}
 
 
 
