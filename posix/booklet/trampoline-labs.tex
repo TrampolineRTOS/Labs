@@ -152,38 +152,17 @@ Go into the lab1 directory. There are 2 files:
 Edit the lab1.oil file and update the \texttt{TRAMPOLINE\_BASE\_PATH} attribute
 in function of your configuration: it should point to the directory where Trampoline is installed.
 
-%You should also modify the \texttt{LDFLAGS} lines describing the location of the libraries used by the cross compiler. Set the first line to:
-
-%{\footnotesize
-%\begin{verbatim}
-%-L/usr/local/tp_treel_imta/gcc-arm-none-eabi-7-2018-q2-update/arm-none-eabi/lib/thumb/v7e-m
-%\end{verbatim}}
-
-%and the second one to:
-
-%{\footnotesize
-%\begin{verbatim}
-%-L/usr/local/tp_treel_imta/gcc-arm-none-eabi-7-2018-q2-update/lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m
-%\end{verbatim}}
-
-
 lab1 is a very simple application with only 1 task named \texttt{task1}. It
 starts automatically (\texttt{AUTOSTART = TRUE \{ ... \}} in the OIL file) and
-turns on LED A0.
+prints "\texttt{Hello world}" on the terminal.
 
 To compile this application, go into the lab1 directory and type (on a single line):
 
-%\unixcl{\parbox{230\unitlength}{export\blanc{}PATH=\$PATH\textbackslash\\
-%:\normaltilde/trampoline/goil/makefile-macosx\textbackslash\\
-%:\normaltilde/Tools/gcc-arm/gcc-arm-none-eabi/bin\textbackslash\\
-%:\normaltilde/Tools/bin}}
-
 %\namedtodo[JLB]{update path}
 \unixcl{\parbox{\linewidth}{%
-        goil\blanc{}--target=cortex/armv7em/stm32f303/coroLabBoard\blanc{}\\%\textbackslash\\
---templates=/opt/trampoline/goil/templates\blanc{}lab1.oil}}
+goil\blanc{}--target=posix\blanc{}--templates=/opt/trampoline/goil/templates/\blanc{}lab1.oil}}
 
-The \texttt{--target} option is used to define the target system (here we generate the OS level data structures of Trampoline for a \texttt{cortex} core with the \texttt{armv7em} instruction set, a \texttt{stm32f303} micro-controller and the board is the \texttt{coroLabBoard}).
+The \texttt{--target} option is used to define the target system (here we generate the OS level data structures of Trampoline for the \texttt{posix} target).
 The \texttt{--templates} option indicates where to find the template files used to generate the configuration of the kernel.
 
 Alongside the C files of the kernel configuration, Goil also generates a build script for the application (files \texttt{make.py} and \texttt{build.py}).
@@ -195,70 +174,19 @@ Continue the build process by typing:
 \unixcl{./make.py}
 
 The application and Trampoline OS are compiled and linked together.
-The target file is named \texttt{lab1\_elf}.
+The target file is named \texttt{lab1\_exe}.
 
-To upload the application, check that the board is connected to the computer, then type:
+To run the application, simply run the application:
 
-\unixcl{./make.py\blanc{}burn}
+\unixcl{./lab1_exe}
 
-The following message is displayed (some lines have been truncated to fit on the page):
+The program starts and prints the message. As soon as the job of Task1 is terminated, Trampoline gets into idle (starting an internal idle task). To terminate the process, simply type \unixcl{Ctrl+C}.
 
-\begin{shaded*}
-\scriptsize
-\vspace{-1.7mm}
-\begin{verbatim}
-Nothing to make.
-st-flash write lab1.elf.bin 0x8000000
-st-flash 1.5.1
-2019-04-28T17:45:53 INFO common.c: Loading device parameters....
-2019-04-28T17:45:53 INFO common.c: Device connected is: F334 device, id 0x10016438
-2019-04-28T17:45:53 INFO common.c: SRAM size: 0x3000 bytes (12 KiB), Flash: 0x10000 ...
-2019-04-28T17:45:53 INFO common.c: Attempting to write 16660 (0x4114) bytes to stm32 ...
-Flash page at addr: 0x08004000 erased
-2019-04-28T17:45:53 INFO common.c: Finished erasing 9 pages of 2048 (0x800) bytes
-2019-04-28T17:45:53 INFO common.c: Starting Flash write for VL/F0/F3/F1_XL core id
-2019-04-28T17:45:53 INFO flash_loader.c: Successfully loaded flash loader in sram
-  9/9 pages written
-2019-04-28T17:45:53 INFO common.c: Starting verification of write complete
-2019-04-28T17:45:54 INFO common.c: Flash written and verified! jolly good!
-\end{verbatim}
-\end{shaded*}
-
-The program starts and LED A0 should be on.
-
-%\subsection{A word about memory sections}
-
-%AUTOSAR defines a way to put objects (constants, variables and functions) in memory sections in a portable way\footnote{memory section declaration is not part of the C standard}. For that, a set of macro are used along with a generated file: MemMap.h. Functions should be declared with the \lstinline{FUNC} macro, variables with the \lstinline{VAR} macro, constants with the \lstinline{CONST} macro and pointers to variables, pointers to constant, constant pointers to variable and constant pointers to constant with \lstinline{P2VAR}, \lstinline{P2CONST}, \lstinline{CONSTP2VAR} and \lstinline{CONSTP2CONST} respectively. Sections are opened and closed with a macro definition and the inclusion of the \lstinline{tpl_memmap.h} file. For instance:
-
-%\begin{lstlisting}
-%#define APP_Task_my_periodic_task_START_SEC_VAR_32BIT
-%#include "tpl_memmap.h"
-%VAR(int, AUTOMATIC) period;
-%VAR(int, AUTOMATIC) occurence;
-%#define APP_Task_my_periodic_task_STOP_SEC_VAR_32BIT
-%#include "tpl_memmap.h"
-%\end{lstlisting}
-
-%defines variables \lstinline{period} and \lstinline{occurence} in the variables section of task \lstinline{my_periodic_task}.
-
-%\begin{lstlisting}
-%#define APP_Task_my_periodic_task_START_SEC_CODE
-%#include "tpl_memmap.h"
-%TASK(my_periodic_task)
-%{
-  %...
-  %TerminateTask();
-%}
-%#define APP_Task_my_periodic_task_STOP_SEC_CODE
-%#include "tpl_memmap.h"
-%\end{lstlisting}
-
-%defines the task \lstinline{my_periodic_task} in the code section of task \lstinline{my_periodic_task}. \lstinline{goil} generates the sections for tasks according to the description.
 
 
 \section{OS system calls and tasks}
 
-For each question, you should create a copy of the lab1 directory and change its name to lab1q1, lab1q2, \ldots
+For each question, you should create a copy of the lab1 directory and change its name to \texttt{lab1q1}, \texttt{lab1q2}, \ldots
 
 \subsection{Task activation and scheduling}
 
@@ -270,17 +198,16 @@ The \texttt{ActivateTask()} system call allows to activate a task of the applica
         \item add the declaration of both tasks in the OIL file; \texttt{task2} should have priority 1 and its AUTOSTART attribute should be set to FALSE; \texttt{task3} should have priority 8 and its AUTOSTART attribute should be set to FALSE;
         \item in the cpp file, you should:
             \begin{itemize}
-                \item declare each tasks with the DeclareTask keyword,
                 \item provide the body of each tasks:
                     \begin{itemize}
-                        \item task \texttt{task2} turns on LED A2 and turns off LED A3;
-                        \item task \texttt{task3} turns on LED A3 and turns off LED A2;
+						\item task \texttt{task2} prints "\texttt{==Task2==}" on the terminal;
+                        \item task \texttt{task3} prints "\texttt{==Task3==}" on the terminal;
                     \end{itemize}
                 \item and, lastly, modify task \texttt{task1} so that is activates \texttt{task2} and \texttt{task3} (in this order).
             \end{itemize}
     \end{itemize}
 
-    Before to execute the resulting application, draw a schedule and determine the final state of LEDS.
+	Before to execute the resulting application, draw a schedule and give the text written on the terminal
     Your diagram must clearly show activation, execution and termination of each job using symbols used in the course.
     Then execute the application and check the correctness of your diagram.
 \end{ex}
