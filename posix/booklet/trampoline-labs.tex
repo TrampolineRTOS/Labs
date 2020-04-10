@@ -85,41 +85,15 @@ sets the \texttt{trampoline} directory as current directory. This assumes the \t
 
 \section{Setting up the environment}
 
-The tools that we will use have already been installed on the machine:
+The tools that we will use have already been installed on the virtual machine:
 
 \begin{itemize}
   \item Trampoline RTOS and the \texttt{goil} configuration generator;
 
-  \item \texttt{arm-none-eabi-gcc toolchain} including among other tools a c
-    compiler and a c debugger;
-
-  \item \texttt{stlink}, a set of tools to interact with the STM32F303 microcontroller.
+  \item Viper, the virtual processor emulator that comes with Trampoline and send stimuli to Trampoline. Stimuli may be a periodic signal to simulate a timer overflow and use periodic tasks, or an aperiodic signal to simulate an external interrupt.
 \end{itemize}
 
-
-Trampoline is installed in \unixcl{/opt/trampoline}. \texttt{goil} configuration generator is installed in \unixcl{/usr/local/bin}. The toolchain and \texttt{stlink}, the tool used to download binaries on the board, are installed in \unixcl{/opt}. All the usefull paths are set in the \unixcl{.profile} startup file of your account.
-
-%In order to be able to use the tools, you have to define the configuration of your development environment.
-%First, you have to inform the system of the location of the tools.
-%This is done by setting the \texttt{PATH} environment variable in your \texttt{.profile} file.
-%\namedtodo[JLB]{Update path to reflect new locations}It can be done with the following commands:
-%
-%\unixcl{echo\blanc{}"export\blanc{}PATH=/Volumes/PRETS/trampoline/goil/makefile-macosx:\$PATH" \blanc{}>>\blanc{}\normaltilde/.profile}
-%
-%
-%\unixcl{echo\blanc{}"export \blanc{}PATH=/Volumes/PRETS/gcc-arm-none-eabi-8-2018-q4-major/bin:\$PATH"\blanc{}>>\blanc{}\normaltilde/.profile}
-%
-%To get the \normaltilde~character on french apple keyboard, you have to use Alt+n.
-%
-%It is assumed that the location of the\texttt{stlink} tools are already in the PATH.
-%If it is not the case, update your \texttt{.profile}.
-%
-%The \texttt{.profile} file is parsed by the shell when it starts. To force your current shell instance to read the file, use the following command:
-%
-%\unixcl{source\blanc{}\normaltilde/.profile}
-%
-%This will enable the configuration in the terminal where you typed the command.
-%In order to have the configuration active in all terminals, you have to log out and then log in the system.
+Trampoline is installed in \unixcl{/opt/trampoline}. \texttt{goil} configuration generator is installed in \unixcl{/usr/local/bin}. All the usefull paths are set in the \unixcl{.profile} startup file of your account.
 
 Now, check that \texttt{goil} is working.
 The command \unixcl{goil\blanc{}--version} should print:
@@ -130,216 +104,26 @@ The command \unixcl{goil\blanc{}--version} should print:
 \scriptsize
 \vspace{-1.7mm}
 \begin{verbatim}
-goil : 3.1.9, build with GALGAS 3.3.11
+goil : 3.1.11, build with GALGAS 3.3.12
 No warning, no error.
 \end{verbatim}
 \end{shaded*}
 
-Then check that \texttt{gcc-arm} is also working.
-The command \unixcl{arm-none-eabi-gcc\blanc{}--version} should print:
-
-\medskip
-
-\begin{shaded*}
-\scriptsize
-\vspace{-1.7mm}
-\begin{verbatim}
-arm-none-eabi-gcc (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 [...]
-Copyright (C) 2018 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-\end{verbatim}
-\end{shaded*}
-
-Last, check that \texttt{stlink} tools are available with the following command: \unixcl{st-info\blanc{}--version}.
-The output should be:
-
-\medskip
-
-\begin{shaded*}
-\scriptsize
-\vspace{-1.7mm}
-\begin{verbatim}
-v1.3.0
-\end{verbatim}
-\end{shaded*}
-
-You are now ready to compile and load your first application on the board. But first, let's take a quick look at the board.
-
-\chapter{The board}
+\chapter{The virtual board}
 
 \section{Overview}
 
-The Master CORO lab board is built around a NUCLEO-F303K8 breakout board (BB). A breakout board is a minimal board designed to be used with tiny SMD\footnote{Surface Mounted Device} on a breadboard or in a hobbyist design. The NUCLEO-F303K8 BB is built around a ST Microelectronics microcontroller, the STM32F303K8T6, which has an ARM Cortex-M4 computing core. It is a 32 bits micro-controller running at up to 72MHz. It embeds 64kB of flash memory to store the program and the constant data and 16kB of SRAM to store the variables. Here is the NUCLEO-F303K8 BB:
+An RTOS have to interract with its environment. 
 
-\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics[scale=.7]{img/nucleo.pdf} 
-   \label{fig:example}
+\begin{figure}
+\begin{center}
+   \includegraphics[width=.5\textwidth]{./img/viper.pdf}
+\end{center}
+\label{fig:viper}
+\caption{ViPer}
 \end{figure}
 
-
-On the back, a second microcontroller runs the debugging software: ST-LINK. This software establishes a USB communication with the host development computer and allows to download your software to the STM32F303K8T6. It acts also as a JTAG debugger to do step by step execution of the software running on the STM32F303K8T6.
-
-The NUCLEO-F303K8 is pin to pin compatible with the Arduino Nano BB but in the hearth it is very different and of course more powerful. 
-
-\section{The Master CORO board}
-
-The board adds the following components:
-\begin{itemize}
-\setlength\itemsep{-.2em}
-\item{A more accessible reset button}
-\item{5 push buttons}
-\item{A potentiometer}
-\item{A 24 pulses per turn square encoder with a push button}
-\item{A 4 positions DIP-switch}
-\item{1 green LED}
-\item{6 red LEDs connected in charlieplexing}
-\item{8 yellow LEDs}
-\item{A graphical 1.8" TFT color screen}
-\item{A connector for a servomotor}
-\item{A connector for a unipolar stepper motor}
-\item{A connector for an ultrasonic range finder}
-\item{An external power supply connector}
-\end{itemize}
-
-In this list some devices are not connected to the NUCLEO-F303K8 BB but to a Microchip MCP23S17 SPI I/O expander which is an external GPIO where control and data registers are read and updated through the SPI bus: 4 of the 5 push buttons, the DIP-switch and the 8 yellow LEDs.
-
-A picture of the board is presented at figure \ref{pic:board}
-
-\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics[scale=.7]{img/board.pdf} 
-   \label{pic:board}
-\end{figure}
-
-\subsection{Reset button}
-
-The white button in the bottom left corner of the board is the reset button. It is connected to the NUCLEO-F303K8 BB reset, to the MCP23S17 reset and to the 1.8" TFT color screen reset. The reset line is pulled up to the 3.3V supply by a 10k$\Omega$ resistor. Pressing the button pulls down the reset line to the ground.
-
-\subsection{Push buttons}
-
-The blue buttons are push buttons. The lone one at the bottom of the board is connected to pin D6 (Arduino)~/ PB1\footnote{Line 1 of port B.} pin of the NUCLEO-F303K8 BB. The 4 buttons on the right are connected to lines 4 to 7 of port B of the MCP23S17. Il all cases, the pull-up of the GPIO lines should be enabled and pressing the button pulls the line to the ground. Hardware debouncing is wired on all push buttons.
-
-\subsection{Potentiometer}
-
-The central terminal 10k$\Omega$ potentiometer is connected to the A2 (Arduino)~/ PA3~/ ADC\_IN3 pin of the NUCLEO-F303K8 BB. The two other terminals are connected to the ground and to the 3.3V supply. Turning the potentiometer clockwise decreases the voltage of this pin.
-
-\subsection{Square encoder}
-
-The square encoder has its push button connected to D5 (Arduino)~/~PB6 which is also the channel 4 of Timer 1. The 2 pins of the encoder are connected to A0 (Arduino)~/ PA0~/ ADC\_IN0 and A1 (Arduino)~/ PA1~/ ADC\_IN1.
-
-\subsection{DIP switch}
-
-The DIP switch is connected to lines 0 to 3 of port B of the MCP23S17. The pullup of this lines should be enabled. When a switch is ON, the corresponding line is pulled down to the ground.
-
-\subsection{Green LED}
-
-The green LED named PULSE is connected to pin D3~/ PB0~/ TIM3\_CH3. This LED is on is a high level is set on the pin.
-Communication between the MCU and both the LCD and the I/O multiplexer uses the SPI interface of the MCU.
-Thus to ensure integrity of transactions, the software design must enforce that transactions are atomic with regards to each others.
-
-\section{Yellow LEDs}
-
-8 yellow LEDs are connected to PORT A of the I/O expander. They are lit on when the line is set to the high level. 
-
-\subsection{Power supply}
-
-The board power is supplied by USB. Connect a USB cable to the MCU USB plug and the board switches on. If a servomotor and/or a stepper motor is connected, the green connector on the back shall be used the poser these devices.
-
-\begin{framed}
-\textbf{Note about concurrent accesses to the hardware} 
-
-The SPI bus is shared by the TFT LCD display and the I/O expander. Concurrent accesses to the SPI bus may happen when using the functions to print on the display and/or to read/write ports of the I/O expander. In addition concurrent accesses to the display itself at higher level may happen. If more than one task use the display and/or the I/O expander, it is up to your application to protect both ressources.
-\end{framed}
-
-
-\section{The hardware drivers}
-\label{sec:coroutils}
-
-%\namedtodo[MB]{Update section to reflect integration of functions through
-%  \texttt{setupBoard}.}{
-A set of functions is provided to use the TFT LCD display, the I/O expander, and one of the embedded timer.
-The source code of these functions is located within the Trampoline directory in \unixcl{machines/cortex/armv7em/stm32f303/coroLabBoard}.
-
-Some of them are documented below. For the TFT LCD display, an object, \lstinline{Tft} is instantiated.
-
-\begin{description}
-     \item[void initCoroBoard()] initializes the GPIO and the SPI according to the hardware of the board.
-%    \item[void setupIOExtender()] sets up the I/O expander. This function has to be called once, before to use the functions of the I/O Extender driver (see below).
-%    \item[void setupDisplay()] sets up the display. This function has to be called once, before to use the printing functions.
-    \item[void Tft.erase()] erases the TFT display.
-    \item[void Tft.setTextCursor(\textit{const unsigned int col}, \textit{const unsigned int line})] set the location of the text cursor. \textit{col} argument ranges from 0 to 21 and \textit{line} argument ranges from 0 to 8.
-    \item[void Tft.print(\textit{any type})] prints at the current cursor location. 
-    \item[void Tft.println(\textit{any type})] same as above and goes at the beginning of the next line. 
-    \item[void Tft.eraseText(\textit{const unsigned int n})] erases \textit{n} characters from the cursor location. 
-
-%    \item[void println_string(\textit{const char * str})] prints \textit{str} on the TFT and goes to next line.
-%    \item[void println_uint(\textit{uint32_t u})] prints \textit{u} on the TFT and goes to next line.
-%    \item[void println_int(\textit{int32_t u})] prints \textit{i} on the TFT and goes to next line.
-    \item[void setupTimer()] sets up timer TIM6 with a 1$\mu$s tick. This function has to be called once, before to use the functions related to the timer.
-    \item[void resetTimer()] resets TIM6 value to 0.
-    \item[uint32_t getTimerValue()] returns TIM6 current value.
-\end{description}
-
-
-\section{The I/O expander driver}
-
-The I/O expander drivers implements a set of functions to change the states of LEDs and poll the state of buttons.
-Notice that the programming of I/O pins in input or output is done in the \textit{setupIOExtender} function.
-
-The driver is provided by the class \textit{mcp23s17}.
-Users should not create instance of this class as a singleton instance named \textit{ioExt} is created at compile time.
-
-Among the funciton provided by the driver, we will use:
-
-\begin{description}
-    \item[void ioExt.digitalWrite(\textit{port p}, \textit{uint8\_t bitNum, bool value})] sets the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}) to value \textit{value} (0 or 1).
-
-    \item[uint8\_t ioExt.digitalRead(\textit{port p}, \textit{uint8\_t bitNum})] returns the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
-
-    \item[void ioExt.digitalToggle(\textit{port p}, \textit{uint8\_t bitNum})] toggles the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}).
-
-    \item[void ioExt.setBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to HIGH.
-
-    \item[void ioExt.clearBits(\textit{port p}, \textit{uint8\_t bitField})] sets the value of bits of port \textit{p} contained in \textit{bitField} to LOW.
-
-    \item[void ioExt.writeBits(\textit{port p}, \textit{uint8\_t val})] overwrites values of bits of \textit{p} with \textit{val}.
-
-    \item[uint8_t ioExt.readBits(\textit{port p})] returns the values of bits of \textit{p}.
-\end{description}
-
-As an illustration, the following code turn on LED 0 and toggles LED 1.
-
-\begin{lstlisting}[language=C]
-TASK(t_LED0ON_LED1TOGGLE)
-{
-    ioExt.digitalWrite(mcp23s17::PORTA, 0, 1);
-    ioExt.digitalToggle(mcp23s17::PORTA, 1);
-    TerminateTask();
-}
-\end{lstlisting}
-
-
-And the following example reads switch button {0} to start Trampoline in a specific appmode.
-
-\begin{lstlisting}[language=C]
-int main()
-{
-    if (ioExt.digitalRead(mcp23s17::PORTB, 0) == 0)
-    {
-      /* Start Trampoline in the testAppmode appmode */
-      StartOS(testAppmode);
-    }
-    else                       /* otherwise */
-    {
-      /* Start Trampoline in the default appmode */
-      StartOS(OSDEFAULTAPPMODE);
-    }
-    return 0;
-}
-\end{lstlisting}
-
+TODO
 
 \chapter{Lab 1 -- Understanding fixed priority scheduling}
 
@@ -980,82 +764,6 @@ Add a filter to activate task \texttt{receiver} upon the 4th message and then ev
 
 \begin{ex}
     Restarting with the Messaging application, modify the \texttt{inMessage} to make it a queued message with a size of 4 data items and remove the notification. Add an alarm to activate task receiver every 4 seconds. Check the return value of \texttt{ReceiveMessage} and verify that no error occurred (queue under- or over-flow). If errors occur, correct the application.
-\end{ex}
-
-
-
-\chapter{Lab5\\Driving servos}
-
-The goal of this lab is to build a small application to drive a servomotor. Get the \texttt{servo_start} package from \url{https://github.com/TrampolineRTOS/Labs}.
-
-\section{How servos work}
-
-Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
-
-\includegraphics[width=\textwidth]{img/servopwm.pdf}
-
-\section{Servo PWM generation}
-
-The board has a 3 pins connectors for servos on the back side between the external power supply connector and the pair of white JST connectors. There is one symbol per pin: $-$, $+$ and \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);}. The Servos must be connected with the {\bf yellow wire} on the \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin and the {\bf black wire} on the $-$ pin. as shown on the picture below.
-
-\begin{center}
-   \includegraphics[scale=0.25]{img/servoconnection.jpg}
-\end{center}
-
-The 3.3V regulator of the Nucleo BB is not able to power the servo. We need an external power supply connected to the black power supply connector on the back of the board. Get a power supply cord and connect it to the power supply (9V) and to the board.
-
-We are going to drive 1 servo with a task named \texttt{t_servo}.
-
-\begin{ex}
-Program task \texttt{t_servo}. \texttt{t_servo} is periodic with a 20ms period. \texttt{t_servo} toggles the green LED, D1 (D3) (PORTB 0\footnote{Use digitalToggle(PORTB, 0).}). Verify the period using the scope\footnote{Plug a wire from the ground of the probe into the leftmost black connector terminal (labelled GND) and touch the LED left terminal with the probe.}.
-\end{ex}
-
-
-Now instead of toggling the LED, \texttt{t_servo} will use the function \texttt{setServoPulse}. This function takes 1 argument, the \texttt{duration} of the pulse in $\mu$s.  \texttt{setServoPulse} does not allow values lower than 1000 and greater than 2000 in order to avoid to damage the servo. \texttt{setServoPulse} works as follow: the \texttt{ouput} is set to 1 and a timer of the microcontroller is programmed to generate an interrupt after \texttt{duration} $\mu$s. In your OIL file, an ISR which is located in the \texttt{servo.c} file is defined as follow:
-
-\begin{lstlisting}
-  ISR isr_timer_7 {
-    CATEGORY = 1;
-    PRIORITY = 10;
-    SOURCE = TIM7_IRQ;
-  };
-\end{lstlisting}
-
-\begin{ex}
-Modify \texttt{t_servo} to use \texttt{setServoPulse} and generate a pulse with a width  equal to 1.5ms. Verify the behavior using the scope\footnote{Plug a wire from the ground of the probe into the leftmost black connector terminal (labelled GND) and touch \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin with the probe.}.
-\end{ex}
-
-Then connect the servo, it should go to the average position.
-
-\section{Adding high level behavior}
-
-Now we want to set the position of the servo. To do that we need 1 more task that sets the position in a global variable. The corresponding variable is read by the \texttt{t_servo} task to drive the servo.
-
-\begin{ex}
-First we want the position of the servo incremented until it reaches its maximum
-position (2ms pulse), then decremented until it reaches its minimum position
-(1ms pulse). So the servo does round trips. The time to go from the
-minimum position to the maximum position is 5s. Assuming the position is
-incremented and decremented by one, what is the period of this task in
-counter tick unit?
-Program the resulting application.
-\end{ex}
-
-Now we want to be able to set the minimum and maximum positions of the servo. To do that we use buttons.
-
-\begin{ex}
-Add to the previous application the following features and draw an automaton to model the application:
-
-When button B4 is pressed, the servo stops its round-trip. Then (when round-trip is stopped), the following functions are available:
-
-When DIP switch B0 is ON, the minimum position is selected, the servo goes to this position. Then push buttons B7 decrements the minimum position and B5 increments the minimum position.
-
-When DIP switch B0 is OFF, the maximum position is selected, the servo goes to this position. Then push buttons B7 decrements the maximum position and B5 increments the maximum position.
-
-Minimum position should be kept greater than or equal to the position corresponding to the 1ms pulse. Maximum position should be kept lower than or equal to the position corresponding to the 2ms pulse. Minimum position should be kept lower than or equal to the maximum position.
-
-When button B4 is pressed again, the servo resumes its round-trip within the minimum and maximum positions that have been set.
-
 \end{ex}
 
 \end{document}
