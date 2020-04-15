@@ -7,7 +7,6 @@ FUNC(int, OS_APPL_CODE) main(void)
     return 0;
 }
 
-
 TASK(task1)
 {
 	printf("Hello world\n");

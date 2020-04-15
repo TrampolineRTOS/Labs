@@ -29,7 +29,7 @@ CPU lab1 {
     };
     BUILD = TRUE {
       TRAMPOLINE_BASE_PATH = "/opt/trampoline";
-      APP_CPPSRC = "lab1.cpp";
+      APP_SRC  = "lab1.c";
       APP_NAME = "lab1_exe";
       CFLAGS="-ggdb";
       LDFLAGS="-lrt -lpthread";
