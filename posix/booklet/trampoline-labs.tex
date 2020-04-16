@@ -195,8 +195,8 @@ The \texttt{ActivateTask()} system call allows to activate a task of the applica
 \begin{ex}
     Add two tasks in the system: \texttt{task2} and \texttt{task3}.
     \begin{itemize}
-        \item add the declaration of both tasks in the OIL file; \texttt{task2} should have priority 1 and its AUTOSTART attribute should be set to FALSE; \texttt{task3} should have priority 8 and its AUTOSTART attribute should be set to FALSE;
-        \item in the cpp file, you should:
+		\item add the declaration of both tasks in the description file (OIL file); \texttt{task2} should have priority 1 and its AUTOSTART attribute should be set to FALSE; \texttt{task3} should have priority 8 and its AUTOSTART attribute should be set to FALSE;
+		\item in the implementation file (C file), you should:
             \begin{itemize}
                 \item provide the body of each tasks:
                     \begin{itemize}
@@ -222,35 +222,41 @@ The \texttt{ActivateTask()} system call allows to activate a task of the applica
 %\end{ex}
 
 
-\subsubsection{Measuring execution times with a timer}
+\subsubsection{Trace evaluation}
+%TODO:
+% On parle du READY_AND_NEW qui est un état interne… ici, avant?
+%
+It is not possible to measure timings on this virtual platform. However, The trace allows an analysis of the behavior after execution (post-mortem). To get the trace (after an execution) on standard output:
 
-%\namedtodo[SF]{add text on timer API + text on where to use functions}{TODO}
+\begin{lstlisting}
+./readTrace.py
+\end{lstlisting}
 
-\begin{ex}
-    Build an application to measure the execution time of \texttt{ActivateTask} in the following cases:
-    \begin{itemize}
-        \item fully preemptive scheduling, activation of a higher priority task.
-        \item fully preemptive scheduling, activation of a lower priority task.
-        \item fully non preemptive scheduling, activation of a higher priority task.
-        \item fully non preemptive scheduling, activation of a lower priority task.
-    \end{itemize}
+To redirect the output to a file (\texttt{output.txt} here), simply write the command:
+\begin{lstlisting}
+./readTrace.py >output.txt
+\end{lstlisting}
 
-    Explain how to use the timer functions for each case and explain the results.
-\end{ex}
+
+There is one event per line, beginning with the current date (based on \texttt{SystemCounter} value).
+
+Even if the date is the same for several lines, the events (1 per line) are recorded chronologically in the trace file.
+
+Analyze the trace of the current application run, and report on the gantt diagram each events on tasks states.
 
 \subsection{Task chaining}
 
 The \texttt{ChainTask()} system call allows to chain the execution of a task: the calling job terminates and a new job of the target task is created.
 
 \begin{ex}
-    Starting from the application of question~1, replace the call to \texttt{TerminateTask} by a \texttt{ChainTask(task3)} at the end of task a task.
-    Update task \texttt{task3} so that it prints something each time it is executed.
-    Draw a schedule of the new system.
-    Then execute the application to check the correctness of your diagram.
-    Comment on the differences with the previous application.
+	%principe base ChainTask
+	Starting from the application of question~1, replace the call to \texttt{ActivateTask(task3)} and \texttt{TerminateTask} by a \texttt{ChainTask(task3)} at the end of task \texttt{task1}.
+    Draw a schedule of the new system. Then execute the application to check the correctness of your diagram.
+    Comment on the differences with the previous application. Explain the differences with the 2 traces.
 \end{ex}
 
 \begin{ex}
+	%ACTIVATION=1 => 1 fois
     Chain to \texttt{task2} instead of \texttt{task3}.
     Update task \texttt{task2} so that it prints something each time it is executed.
     Draw a schedule of the new system.
@@ -259,6 +265,7 @@ The \texttt{ChainTask()} system call allows to chain the execution of a task: th
 \end{ex}
 
 \begin{ex}
+	%ACTIVATION
     Test the error code returned by ChainTask.
     Modify the OIL file so that ChainTask returns \texttt{E\_OK}.
     Draw a schedule of the new system.
@@ -267,7 +274,7 @@ The \texttt{ChainTask()} system call allows to chain the execution of a task: th
 \end{ex}
 
 \begin{ex}
-    Build an application to measure the execution time of \texttt{ChainTask} in the following cases:
+	If we wanted to measure the execution time, of \lstinline{ChainTask}, we would have to use a timer as stopwatch. Explain where it should be started and stopped in the following cases:
     \begin{itemize}
         \item fully preemptive scheduling, activation of a higher priority task.
         \item fully preemptive scheduling, activation of a lower priority task.
