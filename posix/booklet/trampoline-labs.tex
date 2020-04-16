@@ -308,17 +308,17 @@ Before to proceed with the following questions, consult the slides of the course
     \item modify the code of the tasks:
         \begin{itemize}
             \item task \texttt{task1} activates \texttt{task2} and \texttt{task3} then sets \texttt{evt\_2} and \texttt{evt\_3} before to terminate.
-            \item tasks \texttt{task2} and \texttt{task3} wait for their event, clear it, and terminate.
+			\item tasks \texttt{task2} and \texttt{task3} wait for their event, clear it, print their name on stdout (\texttt{==Taskx==}) and terminate.
         \end{itemize}
 \end{itemize}
 
 Draw a schedule of the new system.
-Then execute the application to check the correctness of your diagram (before to run the application, add outputs in the code of the task, for instance writes to the LCD or LEDs to ease the correctness checking).
+Then execute the application to check the correctness of your diagram and check that the output order the one awaited. Then, in a second step, explain the trace generated and report each trace event to the schedule of the tasks.
 
 \end{ex}
 
 \begin{ex}
-    Build an application to measure the execution time of \texttt{SetEvent} in the following cases:
+	As in the \lstinline{ChainTask()} service call, give the location where to start and stop a stopwatch to measure the \texttt{SetEvent} service call duration in the following cases:
     \begin{itemize}
         \item fully preemptive scheduling, setting an event to a higher priority tasks that is not waiting for the event.
         \item fully preemptive scheduling, setting an event to a higher priority tasks that is waiting for the event.
@@ -326,7 +326,6 @@ Then execute the application to check the correctness of your diagram (before to
         \item fully preemptive scheduling, setting an event to a lower priority tasks that is waiting for the event.
     \end{itemize}
 
-    Explain how to use the timer functions for each case and explain the results.
 \end{ex}
 
 \begin{ex}
@@ -338,13 +337,13 @@ Program an application conforming to the following requirements:
     \item \texttt{t1} prints ``I am t1'' and sets \texttt{evt\_1} of \texttt{server}.
 \end{itemize}
 
-Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task (for instance writes to the LCD or the LEDs) to verify your schedule.
+Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task to verify your schedule.
 \end{ex}
 
 \begin{ex}
 Extend the previous application by adding 2 tasks: \texttt{t2} and \texttt{t3} (priority 1 for both) and 2 events \texttt{evt\_2} and \texttt{evt\_3}. \texttt{server} activates \texttt{t1}, \texttt{t2} and \texttt{t3} and waits for one of the events. When one of the events is set, \texttt{server} activates the corresponding task again.
 
-Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task (for instance writes to the LCD or the LEDs) to verify your schedule.
+Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task to verify your schedule.
 \end{ex}
 
 %================================================================
