@@ -128,7 +128,7 @@ The virtual platform is equiped with:
     Three \textbf{buttons} simulated by keyboard keys:
     \begin{itemize}
       \item
-        \texttt{'a'}: The virtual platform raises an interrupt each time it is pressed through Unix signal \verb|SIGUSR2|.
+        \texttt{'a'}: The virtual platform raises an interrupt each time it is pressed through Unix signal \verb|SIGTERM|.
 
       \item
         \texttt{'b'}: The virtual platform raises an interrupt each time it is pressed through Unix signal \verb|SIGTRAP|.
@@ -408,7 +408,7 @@ Before to run the application, draw a schedule of the execution. Add outputs in 
 \end{ex}
 
 %================================================================
-\chapter{Lab 2 -- Periodic tasks and Alarms}
+\chapter{Lab 2 -- Periodic tasks, Alarms, and ISRs}
 
 \section{Goal}
 
@@ -419,30 +419,48 @@ This lab uses the following concepts: counters, alarms, interrupt request, and i
 
 \section{First application}
 
-This application implements a periodic task that reads switch button B0 of the board every 100ms.
-When switch B0 is open, A3 is turned off.
-When button B0 is closed, A3 is turned on.
+You start with a working application composed of an alarm, a task and an isr.
+
+Let us start by analyzing the OIL configuration file.
+The alarm \verb-oneSec- is \verb-AUTOSTART-, so it is activated at startup.
+Its \verb-CYCLETIME- and \verb-ALARMTIME- are set to \num{100} counter ticks, so it will take its action every \SI{1}{second}.
+The action is \verb-ACTIVATETASK- and targets task \verb-task1-, so \verb-task1- will be activated every \SI{1}{second}.
+There is also an interrupt service routine (isr for short) named \verb-when_a- that is executed whenever an interrupt request is raised on source \verb-SIGTERM-, ie. when key \verb-a- is pressed in the virtual platform.
+
+Let us now look at the C code.
+Whenever isr \verb-when_a- is executed, it toggles the state of LED \verb-GREEN-.
+Whenever task \verb-task1- is executed (every \SI{1}{second}), it toggles the state of LED \verb-RED-.
 
 \begin{ex}
-    The \texttt{updateStateOfB0} function implements a small state machine to convert the state of the switch button to states and events.
-    Draw this state machine.
-    Draw a schedule of the application (the execution of the interrupt service routine associated with the Systick will not be represented; it will be assumed to be negligible).
-    Your diagram should show the instants where the state of the switch changes as well as the state of A3.
-    Build and execute the application to verify your diagram.
+  Update the application so that, while still updating the state of LEDs \verb-GREEN- and \verb-RED- as above, it also toggles the state of LED \verb-BLUE- whenever key \verb-b- is pressed in the virtual platform.
 \end{ex}
 
-Modify the application: when B0 is closed, a processing is triggered.
-This processing is performed by activating a job of task \texttt{t_process} (priority 3) that, on odd executions, turns on LEDS A4 to A8 and on even executions turns them off.
-\begin{ex}
-Draw a schedule of the application.
-Your diagram should show the physical state of the switch as well as the state of the LEDs (associate numbers with the different state and use these numbers in your diagram).
-Build and execute the application to verify your diagram.
-\end{ex}
+
+% This application implements a periodic task that reads switch button B0 of the board every 100ms.
+% When switch B0 is open, A3 is turned off.
+% When button B0 is closed, A3 is turned on.
+
+% \begin{ex}
+%     The \texttt{updateStateOfB0} function implements a small state machine to convert the state of the switch button to states and events.
+%     Draw this state machine.
+%     Draw a schedule of the application (the execution of the interrupt service routine associated with the Systick will not be represented; it will be assumed to be negligible).
+%     Your diagram should show the instants where the state of the switch changes as well as the state of A3.
+%     Build and execute the application to verify your diagram.
+% \end{ex}
+
+% Modify the application: when B0 is closed, a processing is triggered.
+% This processing is performed by activating a job of task \texttt{t_process} (priority 3) that, on odd executions, turns on LEDS A4 to A8 and on even executions turns them off.
+% \begin{ex}
+% Draw a schedule of the application.
+% Your diagram should show the physical state of the switch as well as the state of the LEDs (associate numbers with the different state and use these numbers in your diagram).
+% Build and execute the application to verify your diagram.
+% \end{ex}
 
 
 \section{Second application}
 
-The second application will use 2 periodic tasks: \texttt{t1} (priority 2, period 1s) and \texttt{t2} (priority 1, period 1.5s). t1 toggles LED A3 each time it executes and t2 toggles LED A4.
+The second application will use 2 periodic tasks: \texttt{t1} (priority 2, period \SI{1}{second}) and \texttt{t2} (priority 1, period \SI{1.5}{second}).
+t1 toggles LED \verb-GREEN- each time it executes and t2 toggles LED \verb-RED-.
 
 \begin{ex}
     Draw a schedule of the application that show the 20 first states of the LEDs.
