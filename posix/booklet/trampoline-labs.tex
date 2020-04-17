@@ -138,6 +138,18 @@ The virtual platform is equiped with:
     \end{itemize}
 
   \item
+    Four \textbf{leds}: \verb|RED|, \verb|GREEN|, \verb|BLUE| and \verb|YELLOW|.
+    The state of the leds can be changed through the following functions:
+    \begin{itemize}
+      \item
+        \verb|void set_leds(uint8_t leds)|: switches on the leds given as arguments.
+        For instance, to switch on leds \verb|GREEN| and \verb|BLUE|, you can use \verb-set_leds(GREEN | BLUE)-.
+      \item
+        \verb|void reset_leds(uint8_t leds)|: switches off the leds given as arguments.
+        For instance, to switch off leds \verb|RED| and \verb|YELLOW|, you can use \verb-set_leds(RED | YELLOW)-.
+    \end{itemize}
+    Each time one of these function is called, the state of the leds is printed on the terminal.
+  \item
     A \textbf{display}: the control terminal of the process running TrampolineRTOS program and that can be used through functions of the standard C library.
 \end{itemize}
 
@@ -400,7 +412,10 @@ Before to run the application, draw a schedule of the execution. Add outputs in 
 
 \section{Goal}
 
-Real-Time systems are reactive systems which have to do processing as a result of events. You have seen in Lab \#1 how to start processing as a result of an internal event of the system: by activating a task (\texttt{ActivateTask} and \texttt{ChainTask} services) or by setting an event (\texttt{SetEvent} service). In this lab, you will trigger processing as a result of time elapsing (expiration of an Alarm). This lab uses the following concepts: alarm and counter. On the lab board, the Systick timer is used as interrupt source for alarms. The interrupt is sent every 1ms.
+Real-Time systems are reactive systems which have to trigger processing at certain dates or when the controlled plant reaches a certain state.
+You have seen in Lab \#1 how to start processing as a result of an internal event of the system: by activating a task (\texttt{ActivateTask} and \texttt{ChainTask} services) or by setting an event (\texttt{SetEvent} service).
+In this lab, you will trigger processing as a result of time elapsing or notification of an external event.
+This lab uses the following concepts: counters, alarms, interrupt request, and interrupt service routine.
 
 \section{First application}
 
