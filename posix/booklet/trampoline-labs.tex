@@ -435,123 +435,83 @@ Whenever task \verb-task1- is executed (every \SI{1}{second}), it toggles the st
   Update the application so that, while still updating the state of LEDs \verb-GREEN- and \verb-RED- as above, it also toggles the state of LED \verb-BLUE- whenever key \verb-b- is pressed in the virtual platform.
 \end{ex}
 
-
-% This application implements a periodic task that reads switch button B0 of the board every 100ms.
-% When switch B0 is open, A3 is turned off.
-% When button B0 is closed, A3 is turned on.
-
-% \begin{ex}
-%     The \texttt{updateStateOfB0} function implements a small state machine to convert the state of the switch button to states and events.
-%     Draw this state machine.
-%     Draw a schedule of the application (the execution of the interrupt service routine associated with the Systick will not be represented; it will be assumed to be negligible).
-%     Your diagram should show the instants where the state of the switch changes as well as the state of A3.
-%     Build and execute the application to verify your diagram.
-% \end{ex}
-
-% Modify the application: when B0 is closed, a processing is triggered.
-% This processing is performed by activating a job of task \texttt{t_process} (priority 3) that, on odd executions, turns on LEDS A4 to A8 and on even executions turns them off.
-% \begin{ex}
-% Draw a schedule of the application.
-% Your diagram should show the physical state of the switch as well as the state of the LEDs (associate numbers with the different state and use these numbers in your diagram).
-% Build and execute the application to verify your diagram.
-% \end{ex}
-
-
 \section{Second application}
 
-The second application will use 2 periodic tasks: \texttt{t1} (priority 2, period \SI{1}{second}) and \texttt{t2} (priority 1, period \SI{1.5}{second}).
-t1 toggles LED \verb-GREEN- each time it executes and t2 toggles LED \verb-RED-.
+The second application will use 2 periodic tasks: \texttt{task1} (priority 2, period \SI{1}{second}) and \texttt{task2} (priority 1, period \SI{1.5}{second}).
+At each activation, \texttt{task1} toggles LED \verb-GREEN- while \texttt{task2} toggles LED \verb-RED-.
 
 \begin{ex}
-    Draw a schedule of the application that show the 20 first states of the LEDs.
-    What is the global period of the system?
+  Draw a schedule of the application between date \num{0} and \SI{12}{seconds} that also shows the state of the LEDs.
+  Design, program, and run the application.
 \end{ex}
 
-The application needs a counter and 2 alarms. Program, build, and run the application.
 
 \section{Third application}
 
-In the third application, alarms, counters, and polling of the switch buttons are mixed.
-This application is a system with 2 switches.
-After startup, the system is waiting.
-When the first switch is closed, the system starts a {\it function}\footnote{Here we mean a function of the application, not a function of the C language.} F that is implemented using a periodic task (period = 1s).
-To ``see'' F, uses a blinking LED.
-When the first switch is opened, function F is stopped.
-When the second switch is closed, the system is shutdown as quickly as possible (ie ShutdownOS\footnote{The ShutdownOS service shutdowns the operating system. All tasks and alarms are stopped. ShutdownOS takes a StatusType argument to specify the kind or error which occurred. In our case use E\_OK as argument.} is called).
+In the third application, a \textit{function}\footnote{Here we mean a function of the system, not a function of the C language.} is controlled by external events.
+The external event is key \verb-a- has been pressed.
+When it occurs, it switches the state of the function from active to inactive and conversely.
+When the functions becomes active, it must execute a wake up phase.
+To visualize this step, print message \verb-wake up- on the terminal.
+Then, the function performs a periodic processing.
+To visualize this step, blink a led every \SI{500}{\milli\second}.
+Lastly, when it becomes inactive, it must execute a sleeping phase
+To visualize this step, print message \verb-sleeping- on the terminal.
+
+Another external event is used to shutdown the system as fast as possible.
+This event is key \verb-b- has been pressed.
+The shutdown sequence should switch the function to inactive if it is not already in this state before to shutdown the system (using the \texttt{ShutdownOS} service).
 
 \begin{ex}
-    Explain the design of the application: provide the list and configuration of tasks and alarms.
-    Draw schedules showing different executions.
-    Build and execute the application to verify your diagrams.
-\end{ex}
-
-Requirements change. Now function F implementation needs an Init code
-(runs once when F is started) and a Final code (runs once when F is stopped) as shown in the following diagram:
-
-\begin{center}
-    \resizebox{14cm}{!}{%
-\begin{tikzpicture}
-\draw[step=.5cm,gray!20,very thin] (-0.5, -0.5) grid (16.5,1.5);
-\draw [->] (-0.5,0) -- (16,0);
-\node [yshift=-3mm] at (16,0) {time};
-\draw (0,0) rectangle (1.2,1);
-\node at (0.6,0.5) {Init};
-\draw (1.2,0) rectangle (2.7,1);
-\node at (1.95,0.5) {Body};
-\draw (4,0) rectangle (5.5,1);
-\node at (4.75,0.5) {Body};
-\draw (8,0) rectangle (9.5,1);
-\node at (8.75,0.5) {Body};
-\foreach \x in {0, 4}
-  \draw [xshift=\x cm,thick,<->] (0,-0.5) -- (4,-0.5);
-\draw [xshift=8 cm,thick,<-(] (0,-0.5) -- (3,-0.5);
-\draw [xshift=11cm] (0,0) rectangle (1.2,1);
-\node [xshift=11cm] at (0.6,0.5) {Final};
-\node [rectangle callout, fill=green!50, callout absolute pointer={(0,1)}] at (-1,2) {Start request};
-\node [rectangle callout, fill=red!50, callout absolute pointer={(11,1)}] at (12,2) {Stop request};
-\end{tikzpicture}
-} %% resizebox
-\end{center}
-
-
-\begin{ex}
-    Modify the application to take the new requirements into account.
-    Your implementation will use only basic tasks.
-    Each phase of F (Init, Body, and Final) is executed in a different task.
-    Explain the design of the application: provide the list and configuration of tasks and alarms.
-    Draw schedules showing different execution scenarii.
-    Build and execute the application to verify your diagrams.
+    Propose a design that uses only basic tasks.
+    Draw schedules showing different executions of your design.
+    Program, build and test your design.
 \end{ex}
 
 \begin{ex}
-    Same question as above, but your implementation will use an extended task to control the execution of Init, F, and Stop.
+    Propose a design that uses events and extended tasks.
+    Draw schedules showing different executions of your design.
+    Program, build and test your design.
 \end{ex}
 
 \section{Fourth application}
 
-In this part, you will implement a watchdog. It is a mechanism that allows to stop a processing or a waiting period once a delay has elapsed.
+In this application, you will implement a watchdog.
+A watchdog is a mechanism used to take an action after a certain time has elapsed, either to interrupt some on-going processing, or to bound a waiting period.
 
-In your application, each time B0 is closed, B3 must be pressed within 4 seconds. In this case, you print the time between the two occurrences. Otherwise, an error message is displayed. If B0 is closed more than once are within 5 seconds from the first time, these events are ignored.
+In your application, each time key \verb-a- is pressed, then key \verb-b- must be pressed within \SI{4}{second}.
+In this case, you print the time between the two events.
+Otherwise, an error message is displayed.
+When key \verb-a- is pressed during an idle period, subsequent presses on key \verb-a- are ignored for the next \SI{5}{second}.
 
 \begin{ex}
     Specify this behaviour with a state machine.
-    What is happening if the timeout occurs just after B3 has been closed but before the waiting task got the event?
-    Design and program a solution that handles this situation correctly.
+    What is happening if key \verb-b- is pressed precisely \SI{4}{second} after key \verb-a-?
+    Design a solution that handles this situation correctly.
     Draw a schedule of the behaviour of your application in such a scenario (this schedule should show the state of the alarms).
+    Program and test your design.
 \end{ex}
 
 \section{Fifth application}
 
-Program a chase\footnote{chenillard in French} with a 0.5s period. To do so, use 8 periodic tasks. Each periodic task manages a LED. The chase effect is done by using alarms with a time shift between them.
+In this application, you will program a chase between the LEDs.
+In a chase, at any time, only one LED is on and the chase propagates periodically in a given direction.
+Your chase will propagate with a period of \SI{500}{\milli\second}, with left to right as its initial direction.
 
-When B0 is closed, the chase starts, when it is opened, it is reset.
-When B3 is closed, the chase stops until B3 is opened.
-When B2 is closed, the chase direction changes (even if it is stopped).
+It will be controlled through keys:
+\begin{itemize}
+  \item
+    When key \verb-a- is pressed, it re-initializes the chase.
+    If it was not active then it becomes active.
+  \item
+    When key \verb-b- is pressed, if the chase is active, it is paused.
+    If it was paused, then it is resumed but in the opposite direction.
+\end{itemize}
 
 \begin{ex}
-    Specify the high level behaviour with a state machine.
-    Design and program the application.
-    Explain your design.
+  Describe the system with a state machine.
+  Design a system that implements this state machine.
+  Progran and test your design.
 \end{ex}
 
 %%================================================================
