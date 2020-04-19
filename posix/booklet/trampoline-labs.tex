@@ -517,18 +517,19 @@ It will be controlled through keys:
 %%================================================================
 \chapter{Lab 3 -- Shared object access protection}
 
-To show resources usage, we will use a bad program that allows to corrupt a shared global variable which is not protected against concurrent writes. This has been presented in the course. This lab will show different ways to prevent this wrong behavior by using resources (standard and internal) or other solutions (preemption and priority).
+To show how to propely access to shared resources, we will use a bad program that allows to corrupt a shared global variable which is not protected against concurrent writes. This has been presented in the course. This lab will show different ways to prevent this wrong behavior by using resources (standard and internal) or other solutions (preemption and priority).
 
 To ensure that the compiler does not hide our bug, update the value of the \texttt{CFLAGS} key in the OIL file: replace option \texttt{-Os} by \texttt{-O0} to turn off all optimizations.
 
 \section{Application requirements}
 
 The diagram of figure~\ref{fig:appdiag} describes the application.
-It is composed of 3 tasks that share 2 global variables {\bf declared with the volatile keyword}: \texttt{val} and \texttt{activationCount}:
+It is composed of 3 tasks that share 2 global variables,\texttt{val} and \texttt{activationCount}, {\bf declared with the volatile keyword}.
+The tasks in the system are:
 \begin{itemize}
-\item a background task called \texttt{bgTask}, activated at startup. In an infinite loop it increments then decrements the global variable \texttt{val}. This task has priority 1.
-\item a periodic task called \texttt{periodicTask} that activates a job every 50ms. This periodic task increments the global variable \texttt{activationCount}. If \texttt{activationCount} is odd, \texttt{val} is incremented, otherwise it is decremented. This task has priority 10.
-\item a periodic task \texttt{displayTask} that runs every 2 second and prints \texttt{val}. This task has priority 2.
+\item A background task called \texttt{bgTask}, activated at startup. In an infinite loop it increments then decrements the global variable \texttt{val}. This task has priority 1.
+\item A periodic task called \texttt{periodicTask} that activates a job every 50ms. This periodic task increments the global variable \texttt{activationCount}. If \texttt{activationCount} is odd, \texttt{val} is incremented, otherwise it is decremented. This task has priority 10.
+\item A periodic task \texttt{displayTask} that runs every 2 second and prints \texttt{val}. This task has priority 2.
 \end{itemize}
 
 \def\alarm#1#2{
@@ -622,7 +623,7 @@ The OIL compiler generates many files in the directory bearing the same name as 
 \item \texttt{tpl_app_config.c}
 \end{itemize}
 
-The file \texttt{tpl_app_config.c} contains the tasks descriptors among other data structures. These structures are commented.
+The file \texttt{tpl_app_config.c} contains the task descriptors among other data structures. These structures are commented.
 
 \begin{ex} ~
     \begin{itemize}
