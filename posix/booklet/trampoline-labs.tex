@@ -1,8 +1,8 @@
 \documentclass[11pt]{report}
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \geometry{a4paper}                   % ... or a4paper or a5paper or ...
-%\geometry{landscape}                % Activate for for rotated page geometry
-%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+% \geometry{landscape}                % Activate for for rotated page geometry
+% \usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{amssymb}
@@ -24,15 +24,15 @@
 \usetikzlibrary{shadows}
 \usetikzlibrary{calc}
 \usetikzlibrary{positioning}
-%\usepackage{adjustbox}
+% \usepackage{adjustbox}
 \usepackage{todonotes}
 
 \newcommand{\namedtodo}[2][]{%
-% initials of the author (optional) + note in the margin
-{%
-\todo[color={yellow!50},size=\small]{%
-\textbf{TODO [\uppercase{#1}]:}~#2}%
-}}
+  % initials of the author (optional) + note in the margin
+  {%
+    \todo[color={yellow!50},size=\small]{%
+      \textbf{TODO [\uppercase{#1}]:}~#2}%
+  }}
 
 
 \lstset{
@@ -52,7 +52,7 @@
 \newcommand{\tabkey}{\mbox{$\rightarrow\hspace{-1.4mm}\vert$}}
 \title{PRETS/ETERE\\Lab booklet\\2019-2020}
 \author{Jean-Luc B\'echennec, Mika\"el Briday, S\'ebastien Faucou}
-%\date{}                                           % Activate to display a given date or no date
+% \date{}                                           % Activate to display a given date or no date
 
 \hypersetup{linkcolor=red}
 
@@ -71,17 +71,17 @@ If it is not the case, make sure to have the first configuration steps checked
 by a member of the teaching team before to proceed with the labs.
 
 \begin{framed}
-Do not copy the commands from the PDF file, the characters you get may not have the correct code and the shell will not understand them.
+  Do not copy the commands from the PDF file, the characters you get may not have the correct code and the shell will not understand them.
 \end{framed}
 
 When typing shell commands, remember that spaces are important because they separate the command and its arguments. In this document, spaces in commands are represented by a white rectangle like in the following command (it is an example, do not type it):
 
 \noindent
 \begin{minipage}{.25\textwidth}
-\unixcl{cd\blanc{}trampoline}
+  \unixcl{cd\blanc{}trampoline}
 \end{minipage}
 \begin{minipage}{.7\textwidth}
-sets the \texttt{trampoline} directory as current directory. This assumes the \texttt{trampoline} directory is a subdirectory of the current one.
+  sets the \texttt{trampoline} directory as current directory. This assumes the \texttt{trampoline} directory is a subdirectory of the current one.
 \end{minipage}
 
 \section{Setting up the environment}
@@ -102,8 +102,8 @@ The command \unixcl{goil\blanc{}--version} should print:
 \medskip
 
 \begin{shaded*}
-\scriptsize
-\vspace{-1.7mm}
+  \scriptsize
+  \vspace{-1.7mm}
 \begin{verbatim}
 goil : 3.1.11, build with GALGAS 3.3.12
 No warning, no error.
@@ -177,11 +177,11 @@ In order to use it without breaking everything please take into account the foll
 \end{itemize}
 
 % \begin{figure}
-% \begin{center}
-%    \includegraphics[width=.5\textwidth]{./img/viper.pdf}
-% \end{center}
-% \label{fig:viper}
-% \caption{ViPer}
+%   \begin{center}
+%     \includegraphics[width=.5\textwidth]{./img/viper.pdf}
+%   \end{center}
+%   \label{fig:viper}
+%   \caption{ViPer}
 % \end{figure}
 
 % TODO
@@ -206,8 +206,8 @@ source code of the body of tasks and ISRs.
 Go into the lab1 directory. There are 2 files:
 
 \begin{description}
-    \item[lab1.oil] a minimal OIL description.
-    \item[lab1.cpp] a minimal source code.
+  \item[lab1.oil] a minimal OIL description.
+  \item[lab1.cpp] a minimal source code.
 \end{description}
 
 Edit the lab1.oil file and update the \texttt{TRAMPOLINE\_BASE\_PATH} attribute
@@ -219,9 +219,9 @@ prints "\texttt{Hello world}" on the terminal.
 
 To compile this application, go into the lab1 directory and type (on a single line):
 
-%\namedtodo[JLB]{update path}
+% \namedtodo[JLB]{update path}
 \unixcl{\parbox{\linewidth}{%
-goil\blanc{}--target=posix\blanc{}--templates=/opt/trampoline/goil/templates/\blanc{}lab1.oil}}
+    goil\blanc{}--target=posix\blanc{}--templates=/opt/trampoline/goil/templates/\blanc{}lab1.oil}}
 
 The \texttt{--target} option is used to define the target system (here we generate the OS level data structures of Trampoline for the \texttt{posix} target).
 The \texttt{--templates} option indicates where to find the template files used to generate the configuration of the kernel.
@@ -254,37 +254,37 @@ For each question, you should create a copy of the lab1 directory and change its
 The \texttt{ActivateTask()} system call allows to activate a task of the application.
 
 \begin{ex}
-    Add two tasks in the system: \texttt{task2} and \texttt{task3}.
-    \begin{itemize}
-		\item add the declaration of both tasks in the description file (OIL file); \texttt{task2} should have priority 1 and its AUTOSTART attribute should be set to FALSE; \texttt{task3} should have priority 8 and its AUTOSTART attribute should be set to FALSE;
-		\item in the implementation file (C file), you should:
-            \begin{itemize}
-                \item provide the body of each tasks:
-                    \begin{itemize}
-						\item task \texttt{task2} prints "\texttt{==Task2==}" on the terminal;
-                        \item task \texttt{task3} prints "\texttt{==Task3==}" on the terminal;
-                    \end{itemize}
-                \item and, lastly, modify task \texttt{task1} so that is activates \texttt{task2} and \texttt{task3} (in this order).
-            \end{itemize}
-    \end{itemize}
+  Add two tasks in the system: \texttt{task2} and \texttt{task3}.
+  \begin{itemize}
+    \item add the declaration of both tasks in the description file (OIL file); \texttt{task2} should have priority 1 and its AUTOSTART attribute should be set to FALSE; \texttt{task3} should have priority 8 and its AUTOSTART attribute should be set to FALSE;
+    \item in the implementation file (C file), you should:
+      \begin{itemize}
+        \item provide the body of each tasks:
+          \begin{itemize}
+            \item task \texttt{task2} prints "\texttt{==Task2==}" on the terminal;
+            \item task \texttt{task3} prints "\texttt{==Task3==}" on the terminal;
+          \end{itemize}
+        \item and, lastly, modify task \texttt{task1} so that is activates \texttt{task2} and \texttt{task3} (in this order).
+      \end{itemize}
+  \end{itemize}
 
-	Before to execute the resulting application, draw a schedule and give the text written on the terminal
-    Your diagram must clearly show activation, execution and termination of each job using symbols used in the course.
-    Then execute the application and check the correctness of your diagram.
+  Before to execute the resulting application, draw a schedule and give the text written on the terminal
+  Your diagram must clearly show activation, execution and termination of each job using symbols used in the course.
+  Then execute the application and check the correctness of your diagram.
 \end{ex}
 
-%\subsubsection{Using the debugger to follow the scheduling}
-%\namedtodo[SF]{add text on gdb, add \texttt{init.gdb}
-%  in code.}{TODO}
+% \subsubsection{Using the debugger to follow the scheduling}
+% \namedtodo[SF]{add text on gdb, add \texttt{init.gdb}
+% in code.}{TODO}
 %
-%\begin{ex}
-%  Run the application step by step with the debugger and follow the scheduling.
-%  Identify precisely the preemption point in the code of each tasks.
-%\end{ex}
+% \begin{ex}
+%   Run the application step by step with the debugger and follow the scheduling.
+%   Identify precisely the preemption point in the code of each tasks.
+% \end{ex}
 
 
 \subsubsection{Trace evaluation}
-%TODO:
+% TODO:
 % On parle du READY_AND_NEW qui est un état interne… ici, avant?
 %
 It is not possible to measure timings on this virtual platform. However, The trace allows an analysis of the behavior after execution (post-mortem). To get the trace (after an execution) on standard output:
@@ -310,40 +310,40 @@ Analyze the trace of the current application run, and report on the gantt diagra
 The \texttt{ChainTask()} system call allows to chain the execution of a task: the calling job terminates and a new job of the target task is created.
 
 \begin{ex}
-	%principe base ChainTask
-	Starting from the application of question~1, replace the call to \texttt{ActivateTask(task3)} and \texttt{TerminateTask} by a \texttt{ChainTask(task3)} at the end of task \texttt{task1}.
-    Draw a schedule of the new system. Then execute the application to check the correctness of your diagram.
-    Comment on the differences with the previous application. Explain the differences with the 2 traces.
+  % principe base ChainTask
+  Starting from the application of question~1, replace the call to \texttt{ActivateTask(task3)} and \texttt{TerminateTask} by a \texttt{ChainTask(task3)} at the end of task \texttt{task1}.
+  Draw a schedule of the new system. Then execute the application to check the correctness of your diagram.
+  Comment on the differences with the previous application. Explain the differences with the 2 traces.
 \end{ex}
 
 \begin{ex}
-	%ACTIVATION=1 => 1 fois
-    Chain to \texttt{task2} instead of \texttt{task3}.
-    Update task \texttt{task2} so that it prints something each time it is executed.
-    Draw a schedule of the new system.
-    Then execute the application to check the correctness of your diagram.
-    Comment on the differences with the previous application.
+  % ACTIVATION=1 => 1 fois
+  Chain to \texttt{task2} instead of \texttt{task3}.
+  Update task \texttt{task2} so that it prints something each time it is executed.
+  Draw a schedule of the new system.
+  Then execute the application to check the correctness of your diagram.
+  Comment on the differences with the previous application.
 \end{ex}
 
 \begin{ex}
-	%ACTIVATION
-    Test the error code returned by ChainTask.
-    Modify the OIL file so that ChainTask returns \texttt{E\_OK}.
-    Draw a schedule of the new system.
-    Then execute the application to check the correctness of your diagram.
-    Comment on the differences with the previous application.
+  % ACTIVATION
+  Test the error code returned by ChainTask.
+  Modify the OIL file so that ChainTask returns \texttt{E\_OK}.
+  Draw a schedule of the new system.
+  Then execute the application to check the correctness of your diagram.
+  Comment on the differences with the previous application.
 \end{ex}
 
 \begin{ex}
-	If we wanted to measure the execution time, of \lstinline{ChainTask}, we would have to use a timer as stopwatch. Explain where it should be started and stopped in the following cases:
-    \begin{itemize}
-        \item fully preemptive scheduling, activation of a higher priority task.
-        \item fully preemptive scheduling, activation of a lower priority task.
-        \item fully non preemptive scheduling, activation of a higher priority task.
-        \item fully non preemptive scheduling, activation of a lower priority task.
-    \end{itemize}
+  If we wanted to measure the execution time, of \lstinline{ChainTask}, we would have to use a timer as stopwatch. Explain where it should be started and stopped in the following cases:
+  \begin{itemize}
+    \item fully preemptive scheduling, activation of a higher priority task.
+    \item fully preemptive scheduling, activation of a lower priority task.
+    \item fully non preemptive scheduling, activation of a higher priority task.
+    \item fully non preemptive scheduling, activation of a lower priority task.
+  \end{itemize}
 
-    Explain how to use the timer functions for each case and explain the results.
+  Explain how to use the timer functions for each case and explain the results.
 \end{ex}
 
 \section{Extended tasks and synchronization using events}
@@ -355,59 +355,59 @@ In terms of scheduling, a job is activated when a task is activated or when it l
 
 Before to proceed with the following questions, consult the slides of the course to become familiar with events in Trampoline.
 
-%In the OIL file, set the priority of \texttt{task_0} to 8 and add two events \texttt{evt_0} and \texttt{evt_1}. \texttt{evt_0} is used by \texttt{task_0} and \texttt{evt_1} is used by \texttt{task_1}. \texttt{a_task} activates \texttt{task_0} and \texttt{task_1} then sets \texttt{evt_0} and \texttt{evt_1} and terminates. \texttt{task_0} and \texttt{task_1} wait for their event, clear it and terminate.
+% In the OIL file, set the priority of \texttt{task_0} to 8 and add two events \texttt{evt_0} and \texttt{evt_1}. \texttt{evt_0} is used by \texttt{task_0} and \texttt{evt_1} is used by \texttt{task_1}. \texttt{a_task} activates \texttt{task_0} and \texttt{task_1} then sets \texttt{evt_0} and \texttt{evt_1} and terminates. \texttt{task_0} and \texttt{task_1} wait for their event, clear it and terminate.
 
 \begin{ex}
-     Based on the application of Question~1, build an application with the following characteristics:
-\begin{itemize}
+  Based on the application of Question~1, build an application with the following characteristics:
+  \begin{itemize}
     \item set priority of \texttt{task2} to 8 (so priorities are 1 for \texttt{task1} and 8 for both \texttt{task2} and \texttt{task3});
     \item add two events, \texttt{evt\_2} and \texttt{evt\_3}:
-        \begin{itemize}
-            \item \texttt{evt\_2} is set by task \texttt{task1} to task \texttt{task2}.
-            \item \texttt{evt\_3} is set by task \texttt{task1} to task \texttt{task3}.
-        \end{itemize}
+      \begin{itemize}
+        \item \texttt{evt\_2} is set by task \texttt{task1} to task \texttt{task2}.
+        \item \texttt{evt\_3} is set by task \texttt{task1} to task \texttt{task3}.
+      \end{itemize}
     \item modify the code of the tasks:
-        \begin{itemize}
-            \item task \texttt{task1} activates \texttt{task2} and \texttt{task3} then sets \texttt{evt\_2} and \texttt{evt\_3} before to terminate.
-			\item tasks \texttt{task2} and \texttt{task3} wait for their event, clear it, print their name on stdout (\texttt{==Taskx==}) and terminate.
-        \end{itemize}
-\end{itemize}
+      \begin{itemize}
+        \item task \texttt{task1} activates \texttt{task2} and \texttt{task3} then sets \texttt{evt\_2} and \texttt{evt\_3} before to terminate.
+        \item tasks \texttt{task2} and \texttt{task3} wait for their event, clear it, print their name on stdout (\texttt{==Taskx==}) and terminate.
+      \end{itemize}
+  \end{itemize}
 
-Draw a schedule of the new system.
-Then execute the application to check the correctness of your diagram and check that the output order the one awaited. Then, in a second step, explain the trace generated and report each trace event to the schedule of the tasks.
-
-\end{ex}
-
-\begin{ex}
-	As in the \lstinline{ChainTask()} service call, give the location where to start and stop a stopwatch to measure the \texttt{SetEvent} service call duration in the following cases:
-    \begin{itemize}
-        \item fully preemptive scheduling, setting an event to a higher priority tasks that is not waiting for the event.
-        \item fully preemptive scheduling, setting an event to a higher priority tasks that is waiting for the event.
-        \item fully preemptive scheduling, setting an event to a lower priority tasks that is not waiting for the event.
-        \item fully preemptive scheduling, setting an event to a lower priority tasks that is waiting for the event.
-    \end{itemize}
+  Draw a schedule of the new system.
+  Then execute the application to check the correctness of your diagram and check that the output order the one awaited. Then, in a second step, explain the trace generated and report each trace event to the schedule of the tasks.
 
 \end{ex}
 
 \begin{ex}
-Program an application conforming to the following requirements:
+  As in the \lstinline{ChainTask()} service call, give the location where to start and stop a stopwatch to measure the \texttt{SetEvent} service call duration in the following cases:
+  \begin{itemize}
+    \item fully preemptive scheduling, setting an event to a higher priority tasks that is not waiting for the event.
+    \item fully preemptive scheduling, setting an event to a higher priority tasks that is waiting for the event.
+    \item fully preemptive scheduling, setting an event to a lower priority tasks that is not waiting for the event.
+    \item fully preemptive scheduling, setting an event to a lower priority tasks that is waiting for the event.
+  \end{itemize}
 
-\begin{itemize}
+\end{ex}
+
+\begin{ex}
+  Program an application conforming to the following requirements:
+
+  \begin{itemize}
     \item it is composed of two tasks: \texttt{server} priority 2, \texttt{t1} priority 1.
     \item \texttt{server} is an infinite loop that activates \texttt{t1} and waits for event \texttt{evt\_1}.
     \item \texttt{t1} prints ``I am t1'' and sets \texttt{evt\_1} of \texttt{server}.
-\end{itemize}
+  \end{itemize}
 
-Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task to verify your schedule.
+  Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task to verify your schedule.
 \end{ex}
 
 \begin{ex}
-Extend the previous application by adding 2 tasks: \texttt{t2} and \texttt{t3} (priority 1 for both) and 2 events \texttt{evt\_2} and \texttt{evt\_3}. \texttt{server} activates \texttt{t1}, \texttt{t2} and \texttt{t3} and waits for one of the events. When one of the events is set, \texttt{server} activates the corresponding task again.
+  Extend the previous application by adding 2 tasks: \texttt{t2} and \texttt{t3} (priority 1 for both) and 2 events \texttt{evt\_2} and \texttt{evt\_3}. \texttt{server} activates \texttt{t1}, \texttt{t2} and \texttt{t3} and waits for one of the events. When one of the events is set, \texttt{server} activates the corresponding task again.
 
-Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task to verify your schedule.
+  Before to run the application, draw a schedule of the execution. Add outputs in the bodies of the task to verify your schedule.
 \end{ex}
 
-%================================================================
+% ================================================================
 \chapter{Lab 2 -- Periodic tasks, Alarms, and ISRs}
 
 \section{Goal}
@@ -463,15 +463,15 @@ This event is key \verb-b- has been pressed.
 The shutdown sequence should switch the function to inactive if it is not already in this state before to shutdown the system (using the \texttt{ShutdownOS} service).
 
 \begin{ex}
-    Propose a design that uses only basic tasks.
-    Draw schedules showing different executions of your design.
-    Program, build and test your design.
+  Propose a design that uses only basic tasks.
+  Draw schedules showing different executions of your design.
+  Program, build and test your design.
 \end{ex}
 
 \begin{ex}
-    Propose a design that uses events and extended tasks.
-    Draw schedules showing different executions of your design.
-    Program, build and test your design.
+  Propose a design that uses events and extended tasks.
+  Draw schedules showing different executions of your design.
+  Program, build and test your design.
 \end{ex}
 
 \section{Fourth application}
@@ -485,11 +485,11 @@ Otherwise, an error message is displayed.
 When key \verb-a- is pressed during an idle period, subsequent presses on key \verb-a- are ignored for the next \SI{5}{second}.
 
 \begin{ex}
-    Specify this behaviour with a state machine.
-    What is happening if key \verb-b- is pressed precisely \SI{4}{second} after key \verb-a-?
-    Design a solution that handles this situation correctly.
-    Draw a schedule of the behaviour of your application in such a scenario (this schedule should show the state of the alarms).
-    Program and test your design.
+  Specify this behaviour with a state machine.
+  What is happening if key \verb-b- is pressed precisely \SI{4}{second} after key \verb-a-?
+  Design a solution that handles this situation correctly.
+  Draw a schedule of the behaviour of your application in such a scenario (this schedule should show the state of the alarms).
+  Program and test your design.
 \end{ex}
 
 \section{Fifth application}
@@ -514,7 +514,7 @@ It will be controlled through keys:
   Progran and test your design.
 \end{ex}
 
-%%================================================================
+%% ================================================================
 \chapter{Lab 3 -- Shared object access protection}
 
 To show how to propely access to shared resources, we will use a bad program that allows to corrupt a shared global variable which is not protected against concurrent writes. This has been presented in the course. This lab will show different ways to prevent this wrong behavior by using resources (standard and internal) or other solutions (preemption and priority).
@@ -522,14 +522,17 @@ To show how to propely access to shared resources, we will use a bad program tha
 To ensure that the compiler does not hide our bug, update the value of the \texttt{CFLAGS} key in the OIL file: replace option \texttt{-Os} by \texttt{-O0} to turn off all optimizations.
 
 \section{Application requirements}
+\label{sec:sharedrez}
+
+%\label{{shared_res_app}
 
 The diagram of figure~\ref{fig:appdiag} describes the application.
 It is composed of 3 tasks that share 2 global variables,\texttt{val} and \texttt{activationCount}, {\bf declared with the volatile keyword}.
 The tasks in the system are:
 \begin{itemize}
-\item A background task called \texttt{bgTask}, activated at startup. In an infinite loop it increments then decrements the global variable \texttt{val}. This task has priority 1.
-\item A periodic task called \texttt{periodicTask} that activates a job every 50ms. This periodic task increments the global variable \texttt{activationCount}. If \texttt{activationCount} is odd, \texttt{val} is incremented, otherwise it is decremented. This task has priority 10.
-\item A periodic task \texttt{displayTask} that runs every 2 second and prints \texttt{val}. This task has priority 2.
+  \item A background task called \texttt{bgTask}, activated at startup. In an infinite loop it increments then decrements the global variable \texttt{val}. This task has priority 1.
+  \item A periodic task called \texttt{periodicTask} that activates a job every 50ms. This periodic task increments the global variable \texttt{activationCount}. If \texttt{activationCount} is odd, \texttt{val} is incremented, otherwise it is decremented. This task has priority 10.
+  \item A periodic task \texttt{displayTask} that runs every 2 second and prints \texttt{val}. This task has priority 2.
 \end{itemize}
 
 \def\alarm#1#2{
@@ -559,58 +562,58 @@ The tasks in the system are:
 }
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
-   \centering
-   \begin{tikzpicture}[
-   task/.style={draw,very thick,fill=white,drop shadow={opacity=0.25},text width=2.5cm, text centered, minimum height=1.5cm},
-   alarm/.style={draw,thick,circle,fill=white,drop shadow={opacity=0.25},text width=.5cm}
-   ]
-   \node[task](periodicTask) at (0,0) {periodicTask};
-   \node[task](bgTask) [above=of periodicTask] {bgTask};
-   \node[task](displayTask) [above=of bgTask] {displayTask};
-   \alarm{activateDisplay}{left=20mm of displayTask};
-   \alarm{activatePeriodic}{left=20mm of periodicTask};
-   \sharedvar{val}{left=of bgTask}{east};
-   %\sharedvar{activationCount}{right=of periodicTask}{west};
-   \sharedvar{stdout}{right=of displayTask}{west};
-   \varrect{stdout};
-   \draw [thick,<->] (val.east) -- (bgTask.west);
-   \draw [thick,->] (val.north east) -- ++(5mm,0) |- ($(displayTask.south west) + (0,2mm)$);
-   \draw [thick,<->] (val.south east) -- ++(5mm,0) |- ($(periodicTask.north west) + (0,-2mm)$);
+  \centering
+  \begin{tikzpicture}[
+    task/.style={draw,very thick,fill=white,drop shadow={opacity=0.25},text width=2.5cm, text centered, minimum height=1.5cm},
+    alarm/.style={draw,thick,circle,fill=white,drop shadow={opacity=0.25},text width=.5cm}
+    ]
+    \node[task](periodicTask) at (0,0) {periodicTask};
+    \node[task](bgTask) [above=of periodicTask] {bgTask};
+    \node[task](displayTask) [above=of bgTask] {displayTask};
+    \alarm{activateDisplay}{left=20mm of displayTask};
+    \alarm{activatePeriodic}{left=20mm of periodicTask};
+    \sharedvar{val}{left=of bgTask}{east};
+    % \sharedvar{activationCount}{right=of periodicTask}{west};
+    \sharedvar{stdout}{right=of displayTask}{west};
+    \varrect{stdout};
+    \draw [thick,<->] (val.east) -- (bgTask.west);
+    \draw [thick,->] (val.north east) -- ++(5mm,0) |- ($(displayTask.south west) + (0,2mm)$);
+    \draw [thick,<->] (val.south east) -- ++(5mm,0) |- ($(periodicTask.north west) + (0,-2mm)$);
 
-   \draw [thick,->] (activateDisplay.east) -- ++(5mm,0) -- ++(0,1.5mm) -- ++(3mm,-3mm) -- ++ (0mm,1.5mm) -- (displayTask);
-   \node at ($(activateDisplay.east) + (6.5mm,-3mm)$) {2s};
-   \node[font=\scriptsize] at ($(activateDisplay.east) + (9mm,3mm)$) {{\em ActivateTask}};
-   \draw [thick,->] (activatePeriodic.east) -- ++(5mm,0) -- ++(0,1.5mm) -- ++(3mm,-3mm) -- ++ (0mm,1.5mm) -- (periodicTask);
-   \node at ($(activatePeriodic.east) + (6.5mm,-3mm)$) {50ms};
-   \node[font=\scriptsize] at ($(activatePeriodic.east) + (9mm,3mm)$) {{\em ActivateTask}};
-   %\draw [thick,<->] (activationCount.west) -- (periodicTask);
-   %\draw [thick,->] (activationCount.north west) -- ++(-5mm,0) |- ($(displayTask.south east) + (0,2mm)$);
-   \draw [thick,->] (displayTask) -- (stdout);
-   \end{tikzpicture}
-   \caption{Application diagram}
-   \label{fig:appdiag}
+    \draw [thick,->] (activateDisplay.east) -- ++(5mm,0) -- ++(0,1.5mm) -- ++(3mm,-3mm) -- ++ (0mm,1.5mm) -- (displayTask);
+    \node at ($(activateDisplay.east) + (6.5mm,-3mm)$) {2s};
+    \node[font=\scriptsize] at ($(activateDisplay.east) + (9mm,3mm)$) {{\em ActivateTask}};
+    \draw [thick,->] (activatePeriodic.east) -- ++(5mm,0) -- ++(0,1.5mm) -- ++(3mm,-3mm) -- ++ (0mm,1.5mm) -- (periodicTask);
+    \node at ($(activatePeriodic.east) + (6.5mm,-3mm)$) {50ms};
+    \node[font=\scriptsize] at ($(activatePeriodic.east) + (9mm,3mm)$) {{\em ActivateTask}};
+    % \draw [thick,<->] (activationCount.west) -- (periodicTask);
+    % \draw [thick,->] (activationCount.north west) -- ++(-5mm,0) |- ($(displayTask.south east) + (0,2mm)$);
+    \draw [thick,->] (displayTask) -- (stdout);
+  \end{tikzpicture}
+  \caption{Application diagram}
+  \label{fig:appdiag}
 \end{figure}
 
 \begin{ex}
-    Before programming the application, gives the expected sequence of values for val.
-    Design, program, and run the application.
-    Now, decrease gradually the period of task \texttt{periodicTask} and observe the sequence of values of val.
-    Comment.
+  Before programming the application, gives the expected sequence of values for val.
+  Design, program, and run the application.
+  Now, decrease gradually the period of task \texttt{periodicTask} and observe the sequence of values of val.
+  Comment.
 \end{ex}
 
 
-%Compile again your application but add a \unixcl{CFLAGS = "-O3"} in the OIL file. This flag
-%makes the C compiler optimize the assembly code.
+% Compile again your application but add a \unixcl{CFLAGS = "-O3"} in the OIL file. This flag
+% makes the C compiler optimize the assembly code.
 
-%\begin{ex}
-%Is it the same behavior as in previous question? Why?
-%\end{ex}
+% \begin{ex}
+%   Is it the same behavior as in previous question? Why?
+% \end{ex}
 
 
 
 \section{Global variable protection}
 
-%Remove the \unixcl{CFLAGS = "-O3"} from the OIL file. As shown in the course, we must protect the access to the global variable.
+% Remove the \unixcl{CFLAGS = "-O3"} from the OIL file. As shown in the course, we must protect the access to the global variable.
 
 Update the OIL file and the C program to protect the access to the global variable \texttt{val}. Use a resource to do it.
 
@@ -618,46 +621,46 @@ The resource priority is automatically computed by goil according to the priorit
 
 The OIL compiler generates many files in the directory bearing the same name as the oil file (without the .oil suffix). Among them 3 are of interest for this lab:
 \begin{itemize}
-\item \texttt{tpl_app_define.h}
-\item \texttt{tpl_app_config.h}
-\item \texttt{tpl_app_config.c}
+  \item \texttt{tpl_app_define.h}
+  \item \texttt{tpl_app_config.h}
+  \item \texttt{tpl_app_config.c}
 \end{itemize}
 
 The file \texttt{tpl_app_config.c} contains the task descriptors among other data structures. These structures are commented.
 
 \begin{ex} ~
-    \begin{itemize}
-        \item
-            Recall the computation rule of the ceiling priority of a resource with the immediate ceiling protocol.
-            According to this rule, what should be the ceiling priority of the resource?
-        \item
-            Find the actual ceiling priority in \texttt{tpl_app_config.c}. Is it the expected value? If not, is it a problem?
-    \end{itemize}
+  \begin{itemize}
+    \item
+      Recall the computation rule of the ceiling priority of a resource with the immediate ceiling protocol.
+      According to this rule, what should be the ceiling priority of the resource?
+    \item
+      Find the actual ceiling priority in \texttt{tpl_app_config.c}. Is it the expected value? If not, is it a problem?
+  \end{itemize}
 \end{ex}
 
-%To observe the impact of the priority ceiling protocol, use the following function to observe the priority of the jobs during their execution.
+% To observe the impact of the priority ceiling protocol, use the following function to observe the priority of the jobs during their execution.
 
-%\begin{lstlisting}[language=C]
-%void displayIdAndCurrentPriority()
-%{
-  %TaskType id;
-  %GetTaskID(&id);
-  %if (id >= 0)
-  %{
-    %tpl_priority prio = (tpl_dyn_proc_table[id]->priority) >> PRIORITY_SHIFT;
-    %lcd.print("Id=");
-    %lcd.print(id);
-    %lcd.print(", Prio=");
-    %lcd.print(prio);
-  %}
-%}
-%\end{lstlisting}
+% \begin{lstlisting}[language=C]
+% void displayIdAndCurrentPriority()
+% {
+%   TaskType id;
+%   GetTaskID(&id);
+%   if (id >= 0)
+%   {
+%     tpl_priority prio = (tpl_dyn_proc_table[id]->priority) >> PRIORITY_SHIFT;
+%     lcd.print("Id=");
+%     lcd.print(id);
+%     lcd.print(", Prio=");
+%     lcd.print(prio);
+%   }
+% }
+% \end{lstlisting}
 
-%And you have to add the following line at start of your C file:
+% And you have to add the following line at start of your C file:
 
-%\begin{lstlisting}[language=C]
- %#include "tpl_os_task_kernel.h"
-%\end{lstlisting}
+% \begin{lstlisting}[language=C]
+% #include "tpl_os_task_kernel.h"
+% \end{lstlisting}
 
 
 \section{Protection with an internal resource}
@@ -665,81 +668,106 @@ The file \texttt{tpl_app_config.c} contains the task descriptors among other dat
 An internal resource is automatically taken when the job gets the CPU, and released when it terminates. Replace the standard resource by an internal resource in the OIL file. Remove the \texttt{GetResource} and \texttt{ReleaseResource} in the C file.
 
 \begin{ex}~
-    \begin{itemize}
-        \item
-            What happens? Why?
-        \item
-            How to solve the problem? Draw a schedule of a correct implementation of the system. Program this solution.
-    \end{itemize}
+  \begin{itemize}
+    \item
+      What happens? Why?
+    \item
+      How to solve the problem? Draw a schedule of a correct implementation of the system. Program this solution.
+  \end{itemize}
 \end{ex}
 
 
 \section{Protection using a single priority level}
 
 \begin{ex}
-Modify the OIL file: remove the resource and set the priorities so that all tasks share the same priority. Draw a schedule of the system.
+  Modify the OIL file: remove the resource and set the priorities so that all tasks share the same priority. Draw a schedule of the system.
 \end{ex}
 
 \section{Protection using fully non preemptive scheduling mode}
 
 \begin{ex}
-Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the system.
+  Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the system.
 \end{ex}
 
 %%%% TODO : mettre à jour la question qui suit. Maintenant que Trampoline est installé dans /opt
 %%%% et que les fonctions du TFT et de l'expandeur sont en libs dans machines/, les
 %%%% étudiants ne peuvent plus ajouter les ressources dans le code.
 
-%\section{Upgrading the coro\_utils function}
+% \section{Upgrading the coro\_utils function}
 %
-%\begin{ex}
-%    As explained in section~\ref{sec:coroutils}, both the screen and the IO
-%    expander use the SPI interface of the MCU. Thus, to ensure coherency of SPI
-%    transactions, we have avoided using both devices in the same application.
-%    However, using resources, it is possible to enforce mutual exclusions
-%    between concurrent tasks that use the SPI.
-%    Design and program such an application.
-%\end{ex}
+% \begin{ex}
+%   As explained in section~\ref{sec:coroutils}, both the screen and the IO
+%   expander use the SPI interface of the MCU. Thus, to ensure coherency of SPI
+%   transactions, we have avoided using both devices in the same application.
+%   However, using resources, it is possible to enforce mutual exclusions
+%   between concurrent tasks that use the SPI.
+%   Design and program such an application.
+% \end{ex}
 
 \chapter{Lab4\\Internal communication}
 
-\section{Overview}
+\section{Basic usage}
 
-Internal messaging may be used as an easy to use replacement for shared variables. Messaging allows to send data between tasks. This lab will show the different ways to communicate in OSEK.
+Internal communication allows task to exchange data under the control of the RTOS.
+It can be used in the place of communication through shared global variables.
+It is usually preferable to use internal communication rather than shared global variables because (i) it tends to improve application design by making data flows explicits, and (ii) it limits the bugs resulting by a wrong use of synchronization tools.
 
-Design a first simple application with 2 communicating tasks.
-The OIL file declare 2 tasks: \texttt{sender} and \texttt{receiver} and 2 messages: \texttt{outMessage} and \texttt{inMessage}. \texttt{inMessage} is connected to \texttt{outMessage}. Task \texttt{sender} uses \texttt{outMessage} and task \texttt{receiver} uses \texttt{inMessage}.
+In the starting application for this lab, task \verb|send| sends a message to task \verb|receive|.
+The former is activated at system startup, while the latter is activated when a message is delivered.
+Build, run, and study the code of this application to gain basic knowledge of internal communication.
+More details are provided in the course and in the reference documents available on TrampolineRTOS github page (bottom of homepage).
 
-Task \texttt{sender} is activated every second by the mean of an alarm and sends data to \texttt{outMessage}.
-Send for instance the number of activation of task \texttt{sender}.
-When the data is received in \texttt{inMessage}, the notification mechanism activates task \texttt{receiver}.
-\texttt{receiver} reads the data from \texttt{inMessage} and prints the value.
-
-Notice that message identifiers must be declared before to be used in the source file with \texttt{DeclareMessage}.
-
-\section{Message broadcasting}
-
-OSEK messaging supports \emph{many-to-many} communication. This is done by having more than one receiving messages connected to the same sending message.
 \begin{ex}
-Add 2 other receiving messages connected to \texttt{outMessage}. The first message activates the task \texttt{Emergency} (add the corresponding task), the second message sets an event to task \texttt{NormalOperation} (add the corresponding extended tasks too). Write the C code of the tasks you added. The first one receives the message and prints the value; the second one waits for the event in an infinite loop, receives the message and prints the value. Check the application works as expected.
+  Design an application with two periodic tasks (period \SI{1}{second} and \SI{1.5}{seconds}). At every activation, each task sends a message containing its number of activation since system startup.
+  A third task is activated whenever one of this messages arrives and prints the identity of the sender and its number of activation.
+  The receiver task shall process only one message per activation.
+  It shall not miss any message.
+
+  Explain your design and draw a schedule. Program and test your design.
+\end{ex}
+
+\section{Many-to-many communication pattern}
+
+OSEK messaging supports \emph{many-to-many} communication.
+This is done by having more than one receiving messages connected to the same sending message.
+
+\begin{ex}
+  Design an application with a periodic task that sends random data with values in $[0,100]$.
+  Two other tasks are receiving this flow:
+  \begin{itemize}
+    \item
+      The first one is activated whenever a new message is available and print its value;
+    \item
+      The second one is an extended task that is notified of the arrival of a new value by an event.
+      When the event is received, it prints the average value over the last 10 messages (or less if less than 10 messages have been received so far).
+  \end{itemize}
+
+  Explain your design and draw a schedule. Program and test your design.
 \end{ex}
 
 \section{Filtering}
 
+OSEK messaging also supports filtering.
+Filters are predicate attached to sending or receiving message objects, used to decide if data should be sent or received.
+
 \begin{ex}
-Add a filter to activate task \texttt{receiver} upon the 4th message and then every 3 values (ie 4th, 7th, 11st and so on).
+  Add the following filters to your application:
+  \begin{itemize}
+    \item
+      The task activated upon message arrival is now acticated only if the value is below \num{20} or above \num{80}.
+      In the former case it prints message \verb-low val- and in the latter one it prints \verb-high val-.
+    \item
+      The other task is notified only one every two messages.
+      Notice that it should nonetheless process all messages.
+  \end{itemize}
 \end{ex}
 
-\begin{ex}
-    Modify task \texttt{sender} to send  pseudo-random values ranging from 0 to 100 (you can use for instance xorshift32 as described here:\url{https://en.wikipedia.org/wiki/Xorshift}) and then a modulus.
-    Using filtering, set the event to task \texttt{NormalOperation} only if the value is within the range $[20,60]$; activate task \texttt{Emergency} only if the value is not within the range.
-\end{ex}
-
-\section{Queued messages}
-
+\section{Application design}
 
 \begin{ex}
-    Restarting with the Messaging application, modify the \texttt{inMessage} to make it a queued message with a size of 4 data items and remove the notification. Add an alarm to activate task receiver every 4 seconds. Check the return value of \texttt{ReceiveMessage} and verify that no error occurred (queue under- or over-flow). If errors occur, correct the application.
+  Propose a new design for the application described in section~\ref{sec:sharedrez} that uses messages instead of shared variables.
+
+  Explain your design and draw a schedule. Program and test your design.
 \end{ex}
 
 \end{document}
