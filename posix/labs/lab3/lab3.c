@@ -12,7 +12,7 @@ FUNC(int, OS_APPL_CODE) main(void)
 
 TASK(bgTask)
 {
-	printf("start background task\n");
+	printf("start background task\r\n");
 	while(1)
 	{
 		//loop forever

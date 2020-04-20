@@ -9,7 +9,7 @@ FUNC(int, OS_APPL_CODE) main(void)
 
 TASK(task1)
 {
-	printf("Hello world\n");
+	printf("Hello world\r\n");
     TerminateTask();
 }
 
