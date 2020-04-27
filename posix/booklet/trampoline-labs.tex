@@ -394,7 +394,7 @@ Before to proceed with the following questions, consult the slides of the course
 
   \begin{itemize}
     \item it is composed of two tasks: \texttt{server} priority 2, \texttt{t1} priority 1.
-    \item \texttt{server} is an infinite loop that activates \texttt{t1} and waits for event \texttt{evt\_1}.
+    \item \texttt{server} is \texttt{AUTOSTART} and built around an infinite loop that activates \texttt{t1} and waits for event \texttt{evt\_1}.
     \item \texttt{t1} prints ``I am t1'' and sets \texttt{evt\_1} of \texttt{server}.
   \end{itemize}
 
@@ -482,7 +482,7 @@ A watchdog is a mechanism used to take an action after a certain time has elapse
 In your application, each time key \verb-a- is pressed, then key \verb-b- must be pressed within \SI{4}{second}.
 In this case, you print the time between the two events.
 Otherwise, an error message is displayed.
-When key \verb-a- is pressed during an idle period, subsequent presses on key \verb-a- are ignored for the next \SI{5}{second}.
+When key \verb-a- is pressed, subsequent presses on key \verb-a- are ignored for the next \SI{5}{second}.
 
 \begin{ex}
   Specify this behaviour with a state machine.
@@ -511,7 +511,7 @@ It will be controlled through keys:
 \begin{ex}
   Describe the system with a state machine.
   Design a system that implements this state machine.
-  Progran and test your design.
+  Program and test your design.
 \end{ex}
 
 %% ================================================================
