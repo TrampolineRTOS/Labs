@@ -966,7 +966,7 @@ Add a filter to activate task \texttt{receiver} upon the 4th message and then ev
 \end{ex}
 
 \begin{ex}
-    Modify task \texttt{sender} to send  pseudo-random values ranging from 0 to 100 (you can use for instance xorshift32 as described here:\url{https://en.wikipedia.org/wiki/Xorshift}) and then a modulus.
+    Modify task \texttt{sender} to send  pseudo-random values ranging from 0 to 100 (you can use for instance xorshift32 as described here: \url{https://en.wikipedia.org/wiki/Xorshift}) and then a modulus.
     Using filtering, set the event to task \texttt{NormalOperation} only if the value is within the range $[20,60]$; activate task \texttt{Emergency} only if the value is not within the range.
 \end{ex}
 
