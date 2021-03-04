@@ -241,7 +241,7 @@ To run the application, simply run the application:
 
 \unixcl{./lab1_exe}
 
-The program starts and prints the message. As soon as the job of Task1 is terminated, Trampoline gets into idle (starting an internal idle task). To terminate the process, simply type \unixcl{Ctrl+C}.
+The program starts and prints the message. As soon as the job of Task1 is terminated, Trampoline gets into idle (starting an internal idle task). To terminate the process, simply type \unixcl{q}.
 
 
 
@@ -394,7 +394,7 @@ Before to proceed with the following questions, consult the slides of the course
 
   \begin{itemize}
     \item it is composed of two tasks: \texttt{server} priority 2, \texttt{t1} priority 1.
-    \item \texttt{server} is an infinite loop that activates \texttt{t1} and waits for event \texttt{evt\_1}.
+    \item \texttt{server} is \texttt{AUTOSTART} and built around an infinite loop that activates \texttt{t1} and waits for event \texttt{evt\_1}.
     \item \texttt{t1} prints ``I am t1'' and sets \texttt{evt\_1} of \texttt{server}.
   \end{itemize}
 
@@ -462,6 +462,31 @@ Another external event is used to shutdown the system as fast as possible.
 This event is key \verb-b- has been pressed.
 The shutdown sequence should switch the function to inactive if it is not already in this state before to shutdown the system (using the \texttt{ShutdownOS} service).
 
+\begin{center}
+    \resizebox{14cm}{!}{%
+\begin{tikzpicture}
+\draw[step=.5cm,gray!20,very thin] (-0.5, -0.5) grid (16.5,1.5);
+\draw [->] (-0.5,0) -- (16,0);
+\node [yshift=-3mm] at (16,0) {time};
+\draw (0,0) rectangle (1.2,1);
+\node[text width=0.7cm,centered] at (0.6,0.5) {\texttt{Wake up}};
+\draw (1.2,0) rectangle (2.7,1);
+\node at (1.95,0.5) {Body};
+\draw (4,0) rectangle (5.5,1);
+\node at (4.75,0.5) {Body};
+\draw (8,0) rectangle (9.5,1);
+\node at (8.75,0.5) {Body};
+\foreach \x in {0, 4}
+  \draw [xshift=\x cm,thick,<->] (0,-0.5) -- (4,-0.5);
+\draw [xshift=8 cm,thick,<-(] (0,-0.5) -- (3,-0.5);
+\draw [xshift=11cm] (0,0) rectangle (1.6,1);
+\node [xshift=11cm] at (0.8,0.5) {sleeping};
+\node [rectangle callout, fill=green!50, callout absolute pointer={(0,1)}] at (-1,2) {Start request '\texttt{a}'};
+\node [rectangle callout, fill=red!50, callout absolute pointer={(11,1)}] at (12,2) {Stop request'\texttt{a}'};
+\end{tikzpicture}
+} %% resizebox
+\end{center}
+
 \begin{ex}
   Propose a design that uses only basic tasks.
   Draw schedules showing different executions of your design.
@@ -482,7 +507,7 @@ A watchdog is a mechanism used to take an action after a certain time has elapse
 In your application, each time key \verb-a- is pressed, then key \verb-b- must be pressed within \SI{4}{second}.
 In this case, you print the time between the two events.
 Otherwise, an error message is displayed.
-When key \verb-a- is pressed during an idle period, subsequent presses on key \verb-a- are ignored for the next \SI{5}{second}.
+When key \verb-a- is pressed, subsequent presses on key \verb-a- are ignored for the next \SI{5}{second}.
 
 \begin{ex}
   Specify this behaviour with a state machine.
@@ -511,7 +536,7 @@ It will be controlled through keys:
 \begin{ex}
   Describe the system with a state machine.
   Design a system that implements this state machine.
-  Progran and test your design.
+  Program and test your design.
 \end{ex}
 
 %% ================================================================
