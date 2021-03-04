@@ -174,7 +174,7 @@ The Master CORO lab board is built around a NUCLEO-F303K8 breakout board (BB). A
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
-   \includegraphics[scale=.7]{nucleo.pdf} 
+   \includegraphics[scale=.7]{img/nucleo.pdf} 
    \label{fig:example}
 \end{figure}
 
@@ -209,7 +209,7 @@ A picture of the board is presented at figure \ref{pic:board}
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
-   \includegraphics[scale=.7]{board.pdf} 
+   \includegraphics[scale=.7]{img/board.pdf} 
    \label{pic:board}
 \end{figure}
 
@@ -933,7 +933,12 @@ Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the sy
 \section{Upgrading the coro\_utils function}
 
 \begin{ex}
-    As explained in section~\ref{sec:coroutils}, both the screen and the IO expander use the SPI interface of the MCU. Thus, to ensure coherency of the transactions, we have avoided using both devices in the same application. Upgrade the current implementations of the functions to solve this problem and design an application that shows the effectiveness of your solution.
+    As explained in section~\ref{sec:coroutils}, both the screen and the IO
+    expander use the SPI interface of the MCU. Thus, to ensure coherency of SPI
+    transactions, we have avoided using both devices in the same application.
+    However, using resources, it is possible to enforce mutual exclusions
+    between concurrent tasks that use the SPI.
+    Design and program such an application.
 \end{ex}
 
 \chapter{Lab4\\Internal communication}
@@ -987,14 +992,14 @@ The goal of this lab is to build a small application to drive a servomotor. Get 
 
 Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
 
-\includegraphics[width=\textwidth]{servopwm.pdf}
+\includegraphics[width=\textwidth]{img/servopwm.pdf}
 
 \section{Servo PWM generation}
 
 The board has a 3 pins connectors for servos on the back side between the external power supply connector and the pair of white JST connectors. There is one symbol per pin: $-$, $+$ and \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);}. The Servos must be connected with the {\bf yellow wire} on the \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin and the {\bf black wire} on the $-$ pin. as shown on the picture below.
 
 \begin{center}
-   \includegraphics[scale=0.25]{servoconnection.jpg}
+   \includegraphics[scale=0.25]{img/servoconnection.jpg}
 \end{center}
 
 The 3.3V regulator of the Nucleo BB is not able to power the servo. We need an external power supply connected to the black power supply connector on the back of the board. Get a power supply cord and connect it to the power supply (9V) and to the board.
@@ -1027,7 +1032,13 @@ Then connect the servo, it should go to the average position.
 Now we want to set the position of the servo. To do that we need 1 more task that sets the position in a global variable. The corresponding variable is read by the \texttt{t_servo} task to drive the servo.
 
 \begin{ex}
-First we want the position of the servo incremented until it reaches its maximum position (2ms pulse), then decremented until it reaches its minimum position (1ms pulse). So the servo does round trips. The time we want to go from the minimum position to the maximum position is 5s. Assuming the position is incremented and decremented by one, what is the period of theses tasks in counter tick unit ?
+First we want the position of the servo incremented until it reaches its maximum
+position (2ms pulse), then decremented until it reaches its minimum position
+(1ms pulse). So the servo does round trips. The time to go from the
+minimum position to the maximum position is 5s. Assuming the position is
+incremented and decremented by one, what is the period of this task in
+counter tick unit?
+Program the resulting application.
 \end{ex}
 
 Now we want to be able to set the minimum and maximum positions of the servo. To do that we use buttons.
@@ -1035,18 +1046,16 @@ Now we want to be able to set the minimum and maximum positions of the servo. To
 \begin{ex}
 Add to the previous application the following features and draw an automaton to model the application:
 
-When button B4 is pressed, the servo stops its round-trip. If it is pressed again, round-trip continue. When the round-trip is stopped the following functions are available:
+When button B4 is pressed, the servo stops its round-trip. Then (when round-trip is stopped), the following functions are available:
 
 When DIP switch B0 is ON, the minimum position is selected, the servo goes to this position. Then push buttons B7 decrements the minimum position and B5 increments the minimum position.
 
 When DIP switch B0 is OFF, the maximum position is selected, the servo goes to this position. Then push buttons B7 decrements the maximum position and B5 increments the maximum position.
 
-Minimum position should be kept greater or equal than the position corresponding to the 1ms pulse. Maximum position should be kept lower or equal than the position corresponding to the 2ms pulse. Minimum position should be kept lower or equal than the maximum position.
+Minimum position should be kept greater than or equal to the position corresponding to the 1ms pulse. Maximum position should be kept lower than or equal to the position corresponding to the 2ms pulse. Minimum position should be kept lower than or equal to the maximum position.
 
-When button B4 is pressed again, the servo continues its round-trip and respects the minimum and maximum positions that have been set.
+When button B4 is pressed again, the servo resumes its round-trip within the minimum and maximum positions that have been set.
+
 \end{ex}
-
-
-
 
 \end{document}
