@@ -90,8 +90,8 @@ The tools that we will use have already been installed on the machine:
 \begin{itemize}
   \item Trampoline RTOS and the \texttt{goil} configuration generator;
 
-  \item \texttt{arm-none-eabi-gcc toolchain} including among other tools a c
-    compiler and a c debugger;
+  \item \texttt{arm-none-eabi-gcc toolchain} including among other tools a C/C++
+    compiler and a debugger;
 
   \item \texttt{stlink}, a set of tools to interact with the STM32F303 microcontroller.
 \end{itemize}
@@ -151,7 +151,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \end{verbatim}
 \end{shaded*}
 
-Last, check that \texttt{stlink} tools are available with the following command: \unixcl{st-info\blanc{}--version}.
+Last, check that \texttt{stlink} tools are available with the following command:\\\unixcl{st-info\blanc{}--version}
+
 The output should be:
 
 \medskip
@@ -170,12 +171,12 @@ You are now ready to compile and load your first application on the board. But f
 
 \section{Overview}
 
-The Master CORO lab board is built around a NUCLEO-F303K8 breakout board (BB). A breakout board is a minimal board designed to be used with tiny SMD\footnote{Surface Mounted Device} on a breadboard or in a hobbyist design. The NUCLEO-F303K8 BB is built around a ST Microelectronics microcontroller, the STM32F303K8T6, which has an ARM Cortex-M4 computing core. It is a 32 bits micro-controller running at up to 72MHz. It embeds 64kB of flash memory to store the program and the constant data and 16kB of SRAM to store the variables. Here is the NUCLEO-F303K8 BB:
+The Master CORO lab board is built around a NUCLEO-F303K8 breakout board (BB). A breakout board is a minimal board with components that are difficult to use in prototyping,  on a breadboard or in a hobbyist design, mainly because these components are tiny SMD\footnote{Surface Mounted Device}. The NUCLEO-F303K8 BB is built around a ST Microelectronics microcontroller, the STM32F303K8T6, which has an ARM Cortex-M4 computing core. It is a 32 bits micro-controller running at up to 72MHz. It embeds 64kB of flash memory to store the program and the constant data and 16kB of SRAM to store the variables. The NUCLEO-F303K8 BB is presented at figure \ref{fig:303K8BB}.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[scale=.7]{img/nucleo.pdf} 
-   \label{fig:example}
+   \label{fig:303K8BB}
 \end{figure}
 
 
@@ -277,7 +278,7 @@ Some of them are documented below. For the TFT LCD display, an object, \lstinlin
 %    \item[void println_string(\textit{const char * str})] prints \textit{str} on the TFT and goes to next line.
 %    \item[void println_uint(\textit{uint32_t u})] prints \textit{u} on the TFT and goes to next line.
 %    \item[void println_int(\textit{int32_t u})] prints \textit{i} on the TFT and goes to next line.
-    \item[void setupTimer()] sets up timer TIM6 with a 1$\mu$s tick. This function has to be called once, before to use the functions related to the timer.
+    \item[void setupTimer()] sets up timer TIM6 with a 1$\mu$s tick. This function has to be called once, before to use the functions related to the timer. This timer is useful to measure execution time when needed.
     \item[void resetTimer()] resets TIM6 value to 0.
     \item[uint32_t getTimerValue()] returns TIM6 current value.
 \end{description}
@@ -291,7 +292,7 @@ Notice that the programming of I/O pins in input or output is done in the \texti
 The driver is provided by the class \textit{mcp23s17}.
 Users should not create instance of this class as a singleton instance named \textit{ioExt} is created at compile time.
 
-Among the funciton provided by the driver, we will use:
+Among the function provided by the driver, we will use some of the following functions:
 
 \begin{description}
     \item[void ioExt.digitalWrite(\textit{port p}, \textit{uint8\_t bitNum, bool value})] sets the value of bit \textit{bitNum} (in the range 0 to 7) of port \textit{p} (either \texttt{mcp23s17::PORTA} or \texttt{mcp23s17::PORTB}) to value \textit{value} (0 or 1).
@@ -352,7 +353,7 @@ Trampoline includes an OIL compiler.
 It reads a static description of the objects of the application (tasks,
 ISRs, events, resources, etc.) and generates the corresponding OS data structures.
 In addition to the OIL description, the developer must of course provide the C
-source code of the body of tasxISRs.
+source code of the body of tasks and ISRs.
 
 
 \section{Starting point}
@@ -481,11 +482,11 @@ Add a 3rd task identical to the pulse task (except for the name which is pulse2)
 
 \section{Second add-on}
 
-Replace the code of the pulse2 task by the code you find in the lab1-add-on directory (this directory is at the same level as lab1).
+Replace the code of the pulse2 task by the code you find in the lab1-add-on directory (this directory is at the same level as lab1). This code toggles LED A3.
 
 \section{Third add-on}
 
-Instead of changing the state of LED A3, cancel or start the alarm_pulse. Refer to the OSEK QRDC. You need the GetAlarm, CancelAlarm and SetRelAlarm services.
+Instead of toggling LED A3, cancel or start the alarm_pulse: you will need a state variable to know if the alarm is running or not (use a static int). If the alarm is running, cancel it, if it is not, start it. Refer to the OSEK QRDC. You need the GetAlarm, CancelAlarm and SetRelAlarm services.
 
 
 
@@ -748,6 +749,9 @@ Instead of changing the state of LED A3, cancel or start the alarm_pulse. Refer 
 
 To show resources usage, we will use a bad program that allows to corrupt a shared global variable which is not protected against concurrent writes. 
 
+The application is located in the lab2 directory. Edit the lab2.oil file and update the \texttt{TRAMPOLINE\_BASE\_PATH} attribute in function of your configuration: it should point to the directory where Trampoline is installed.
+
+
 %To ensure that the compiler does not hide our bug, update the value of the \texttt{CFLAGS} key in the OIL file: replace option \texttt{-Os} by \texttt{-O0} to turn off all optimizations.
 
 \section{Application requirements}
@@ -846,11 +850,10 @@ To do this, we declare the object in the file \texttt{.oil} (in the section \tex
   };
 \end{lstlisting}
 
-In addition, the resource must be declared \textbf{in each task that is likely to use this resource}, by adding the line:
-%\lstset{language=OIL}
-\begin{lstlisting}
-  RESOURCE = resVal;
-\end{lstlisting}
+In addition, the resource must be declared \textbf{in each task that is likely to use this resource}, by adding:
+\lstinline{RESOURCE = resVal;}
+within the TASK object.
+
 Thus, the compiler \emph{goil} can determine the priority of the resource (the max of the priorities of the tasks that can take the resource).
 
 At the C level, 2 services are available to access/exit the critical section: GetResource and ReleaseResource.
