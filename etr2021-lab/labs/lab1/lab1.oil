@@ -1,30 +1,28 @@
 OIL_VERSION = "2.5";
 
 IMPLEMENTATION trampoline {
- /* This fix the default STACKSIZE of tasks */
- TASK {
-  UINT32 STACKSIZE = 300 ;
- } ;
+  /* This fix the default STACKSIZE of tasks */
+  TASK {
+    UINT32 STACKSIZE = 300 ;
+  };
 
- /* This fix the default STACKSIZE of ISRs */
- ISR {
-  UINT32 STACKSIZE = 200 ;
- } ;
+  /* This fix the default STACKSIZE of ISRs */
+  ISR {
+    UINT32 STACKSIZE = 200 ;
+  };
 };
 
-CPU lab2 {
+CPU lab1 {
   OS config {
     STATUS = EXTENDED;
-    PAINT_STACK = FALSE;
-    PAINT_REGISTERS = FALSE;
-    
+
     BUILD = TRUE {
-      TRAMPOLINE_BASE_PATH = "/opt/trampoline";
-      APP_CPPSRC = "lab2.cpp";
-      APP_NAME = "lab2.elf";
+      TRAMPOLINE_BASE_PATH = "/Users/jlb/Develop/trampoline";
+      APP_CPPSRC = "lab1.cpp";
+      APP_NAME = "lab1.elf";
       CFLAGS = "-Os -fstack-usage -Wno-strict-aliasing";
       LIBRARY = coroBoard;
-      LDFLAGS = "-Map=lab2.map";
+      LDFLAGS = "-Map=lab1.map";
       COMPILER = "arm-none-eabi-gcc";
       CPPCOMPILER = "arm-none-eabi-g++";
       ASSEMBLER = "arm-none-eabi-as";
@@ -43,25 +41,32 @@ CPU lab2 {
 
   APPMODE AppStd {};
 
-  ALARM activate_tpoll {
-    COUNTER = SystemCounter;
+  TASK task1 {
+    PRIORITY = 2;
     AUTOSTART = TRUE {
       APPMODE = AppStd;
-      ALARMTIME = 100;
-      CYCLETIME = 100;
     };
-    ACTION = ACTIVATETASK {
-      TASK = tpoll;
-    };
-  };
-
-  TASK tpoll {
-    PRIORITY = 5;
     ACTIVATION = 1;
-    SCHEDULE = NON;
+    SCHEDULE = FULL;
+  };
+ 
+  TASK pulse {
+    PRIORITY = 1;
+    AUTOSTART = FALSE;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+  };
+  
+  /* alarm_pulse activates task pulse every 250 ms */
+  ALARM alarm_pulse {
+    COUNTER = SystemCounter;
+    ACTION = ACTIVATETASK {
+      TASK = pulse;
+    };
     AUTOSTART = TRUE {
       APPMODE = AppStd;
+      ALARMTIME = 250;
+      CYCLETIME = 250;
     };
   };
 };
-

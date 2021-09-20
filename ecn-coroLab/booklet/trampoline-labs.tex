@@ -174,7 +174,7 @@ The Master CORO lab board is built around a NUCLEO-F303K8 breakout board (BB). A
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
-   \includegraphics[scale=.7]{nucleo.pdf} 
+   \includegraphics[scale=.7]{img/nucleo.pdf} 
    \label{fig:example}
 \end{figure}
 
@@ -209,7 +209,7 @@ A picture of the board is presented at figure \ref{pic:board}
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
-   \includegraphics[scale=.7]{board.pdf} 
+   \includegraphics[scale=.7]{img/board.pdf} 
    \label{pic:board}
 \end{figure}
 
@@ -268,7 +268,7 @@ Some of them are documented below. For the TFT LCD display, an object, \lstinlin
      \item[void initCoroBoard()] initializes the GPIO and the SPI according to the hardware of the board.
 %    \item[void setupIOExtender()] sets up the I/O expander. This function has to be called once, before to use the functions of the I/O Extender driver (see below).
 %    \item[void setupDisplay()] sets up the display. This function has to be called once, before to use the printing functions.
-    \item[void Tft.eraseDisplay()] erases the TFT display.
+    \item[void Tft.erase()] erases the TFT display.
     \item[void Tft.setTextCursor(\textit{const unsigned int col}, \textit{const unsigned int line})] set the location of the text cursor. \textit{col} argument ranges from 0 to 21 and \textit{line} argument ranges from 0 to 8.
     \item[void Tft.print(\textit{any type})] prints at the current cursor location. 
     \item[void Tft.println(\textit{any type})] same as above and goes at the beginning of the next line. 
@@ -581,16 +581,16 @@ Before to proceed with the following questions, consult the slides of the course
 \begin{ex}
      Based on the application of Question~1, build an application with the following characteristics:
 \begin{itemize}
-    \item set priority of \texttt{task1} to 8;
-    \item add two events, \texttt{evt\_1} and \texttt{evt\_2}:
+    \item set priority of \texttt{task2} to 8 (so priorities are 1 for \texttt{task1} and 8 for both \texttt{task2} and \texttt{task3});
+    \item add two events, \texttt{evt\_2} and \texttt{evt\_3}:
         \begin{itemize}
-            \item \texttt{evt\_1} is set by task \texttt{task0} to task \texttt{task1}.
-            \item \texttt{evt\_2} is set by task \texttt{task0} to task \texttt{task2}.
+            \item \texttt{evt\_2} is set by task \texttt{task1} to task \texttt{task2}.
+            \item \texttt{evt\_3} is set by task \texttt{task1} to task \texttt{task3}.
         \end{itemize}
     \item modify the code of the tasks:
         \begin{itemize}
-            \item task \texttt{task0} activates \texttt{task1} and \texttt{task2} then sets \texttt{evt\_1} and \texttt{evt\_2} before to terminate.
-            \item tasks \texttt{task1} and \texttt{task2} wait for their event, clear it, and terminate.
+            \item task \texttt{task1} activates \texttt{task2} and \texttt{task3} then sets \texttt{evt\_2} and \texttt{evt\_3} before to terminate.
+            \item tasks \texttt{task2} and \texttt{task3} wait for their event, clear it, and terminate.
         \end{itemize}
 \end{itemize}
 
@@ -926,11 +926,19 @@ Modify the OIL file: remove the resource and set the priorities so that all task
 Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the system.
 \end{ex}
 
+%%%% TODO : mettre à jour la question qui suit. Maintenant que Trampoline est installé dans /opt
+%%%% et que les fonctions du TFT et de l'expandeur sont en libs dans machines/, les
+%%%% étudiants ne peuvent plus ajouter les ressources dans le code.
 
 \section{Upgrading the coro\_utils function}
 
 \begin{ex}
-    As explained in section~\ref{sec:coroutils}, both the screen and the IO expander use the SPI interface of the MCU. Thus, to ensure coherency of the transactions, we have avoided using both devices in the same application. Upgrade the current implementations of the functions to solve this problem and design an application that shows the effectiveness of your solution.
+    As explained in section~\ref{sec:coroutils}, both the screen and the IO
+    expander use the SPI interface of the MCU. Thus, to ensure coherency of SPI
+    transactions, we have avoided using both devices in the same application.
+    However, using resources, it is possible to enforce mutual exclusions
+    between concurrent tasks that use the SPI.
+    Design and program such an application.
 \end{ex}
 
 \chapter{Lab4\\Internal communication}
@@ -963,7 +971,7 @@ Add a filter to activate task \texttt{receiver} upon the 4th message and then ev
 \end{ex}
 
 \begin{ex}
-    Modify task \texttt{sender} to send  pseudo-random values ranging from 0 to 100 (you can use for instance xorshift32 as described here:\url{https://en.wikipedia.org/wiki/Xorshift}) and then a modulus.
+    Modify task \texttt{sender} to send  pseudo-random values ranging from 0 to 100 (you can use for instance xorshift32 as described here: \url{https://en.wikipedia.org/wiki/Xorshift}) and then a modulus.
     Using filtering, set the event to task \texttt{NormalOperation} only if the value is within the range $[20,60]$; activate task \texttt{Emergency} only if the value is not within the range.
 \end{ex}
 
@@ -976,94 +984,78 @@ Add a filter to activate task \texttt{receiver} upon the 4th message and then ev
 
 
 
-%%\chapter{Lab4\\Driving servos}
+\chapter{Lab5\\Driving servos}
 
-%%The goal of this lab is to build a small application to drive servomotors. Get the lab4 package from \url{http://www.irccyn.ec-nantes.fr/~bechenne/trampoline-labs/}. Inside there are 2 files: \unixcl{servos.h} and \unixcl{servo.cpp}.
+The goal of this lab is to build a small application to drive a servomotor. Get the \texttt{servo_start} package from \url{https://github.com/TrampolineRTOS/Labs}.
 
-%%Update Trampoline by going to the trampoline directory and typing \unixcl{git pull}. Compile goil.
+\section{How servos work}
 
-%%\section{How servos work}
+Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
 
-%%Servos are driven by using a PWM signal. The width of the signal at the high logic state specifies the position of the servo. The width may range from 0.5ms to 2.5ms for a 180° rotation. In practice servos may not be able to turn by 180° and we are going to use a pulse width ranging from 1ms to 2ms. The signal should repeat every 20ms.
+\includegraphics[width=\textwidth]{img/servopwm.pdf}
 
-%%\includegraphics[width=\textwidth]{servopwm.pdf}
+\section{Servo PWM generation}
 
-%%\section{Servo PWM generation}
+The board has a 3 pins connectors for servos on the back side between the external power supply connector and the pair of white JST connectors. There is one symbol per pin: $-$, $+$ and \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);}. The Servos must be connected with the {\bf yellow wire} on the \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin and the {\bf black wire} on the $-$ pin. as shown on the picture below.
 
-%%The board has 2 connectors for servos on the right side just below the LCD. Servos must be connected with the {\bf yellow wire nearby you} as shown on the picture below.
+\begin{center}
+   \includegraphics[scale=0.25]{img/servoconnection.jpg}
+\end{center}
 
-%%\begin{center}
-   %%\includegraphics[scale=0.25]{servoconnection.jpg}
-%%\end{center}
+The 3.3V regulator of the Nucleo BB is not able to power the servo. We need an external power supply connected to the black power supply connector on the back of the board. Get a power supply cord and connect it to the power supply (9V) and to the board.
 
-%%The 3.3V regulator of the Teensy is not able to power the servos. We need an external power supply connected to the bigs female banana plugs on the top of the board. Get 2 banana cords and connect them to the power supply and to the board as shown on the picture below.
+We are going to drive 1 servo with a task named \texttt{t_servo}.
 
-%%\begin{center}
-   %%\includegraphics[scale=0.25]{powersupply.jpg}
-%%\end{center}
-
-
-
-%%We are going to drive 2 servo. Each servo is driven by a task : \texttt{t_servo0} and \texttt{t_servo1}.
-
-%%\begin{ex}
-%%Program tasks \texttt{t_servo0} and \texttt{t_servo1}. Both tasks are periodic with a 20ms period but are offset by half of the period. \texttt{t_servo0} toggles LED L0-3 and \texttt{t_servo1} toggles LED L1-4. Verify the period using the scope. On the left there is a connector where LED signals are available as well as the GND. Use this connector to connect the scope probes. This connector is shown below
-%%\end{ex}
-
-%%\begin{center}
-   %%\includegraphics[scale=0.25]{connecteurgauche.jpg}
-%%\end{center}
+\begin{ex}
+Program task \texttt{t_servo}. \texttt{t_servo} is periodic with a 20ms period. \texttt{t_servo} toggles the green LED, D1 (D3) (PORTB 0\footnote{Use digitalToggle(PORTB, 0).}). Verify the period using the scope\footnote{Plug a wire from the ground of the probe into the leftmost black connector terminal (labelled GND) and touch the LED left terminal with the probe.}.
+\end{ex}
 
 
+Now instead of toggling the LED, \texttt{t_servo} will use the function \texttt{setServoPulse}. This function takes 1 argument, the \texttt{duration} of the pulse in $\mu$s.  \texttt{setServoPulse} does not allow values lower than 1000 and greater than 2000 in order to avoid to damage the servo. \texttt{setServoPulse} works as follow: the \texttt{ouput} is set to 1 and a timer of the microcontroller is programmed to generate an interrupt after \texttt{duration} $\mu$s. In your OIL file, an ISR which is located in the \texttt{servo.c} file is defined as follow:
 
-%%Now instead of toggling the LED, each task will use the function \texttt{pulse}. This function takes 2 arguments. The first one is the \texttt{output}, the second one is the \texttt{duration} of the pulse in $\mu$s.  \texttt{pulse} does not allow values lower than 1000 and greater than 2000 in order to avoid to damage the servo. \texttt{pulse} works as follow: the \texttt{ouput} is set to 1 and a timer of the microcontroller is programmed to generate an interrupt after \texttt{duration} $\mu$s. Since the same timer is used for both tasks, the tasks have to be shifted by at least the maximum duration of the pulse. In your OIL file, you have to declare the ISR which is located in the \texttt{servo.c} file as follow:
+\begin{lstlisting}
+  ISR isr_timer_7 {
+    CATEGORY = 1;
+    PRIORITY = 10;
+    SOURCE = TIM7_IRQ;
+  };
+\end{lstlisting}
 
-%%\begin{lstlisting}
-  %%ISR ftm_timer {
-    %%CATEGORY = 1;
-    %%PRIORITY = 1;
-    %%SOURCE = FTM0_IRQ;
-  %%};
-%%\end{lstlisting}
+\begin{ex}
+Modify \texttt{t_servo} to use \texttt{setServoPulse} and generate a pulse with a width  equal to 1.5ms. Verify the behavior using the scope\footnote{Plug a wire from the ground of the probe into the leftmost black connector terminal (labelled GND) and touch \tikz[x=.5em,y=.5em]{\draw (0,0) -- ++(.5,0) -- ++(0,1) -- ++(1,0) -- ++(0,-1) -- ++(.5,0);} pin with the probe.}.
+\end{ex}
 
-%%You have to add the \texttt{servo.c} file in the sources of the application  and the fact you use the ftm library in the BUILD attribute of the OS object:
+Then connect the servo, it should go to the average position.
 
-%%\begin{lstlisting}
-      %%APP_SRC = "servo.c";
-      %%LIBRARY = ftm;
-%%\end{lstlisting}
+\section{Adding high level behavior}
 
-%%\begin{ex}
-%%Modify \texttt{t_servo0} and \texttt{t_servo1} to use \texttt{pulse} and generate a pulse with a width  equal to 1.5ms. Verify the behavior using the scope.
-%%\end{ex}
+Now we want to set the position of the servo. To do that we need 1 more task that sets the position in a global variable. The corresponding variable is read by the \texttt{t_servo} task to drive the servo.
 
-%%Then change the pins from 3 and 4 to 20 and 21. 20 and 21 correspond to the servo connectors on the right. Connect the servos to the connectors Each servo should go to the average position. Do not forget to program pins 20 an 21 as \texttt{OUTPUT}.
+\begin{ex}
+First we want the position of the servo incremented until it reaches its maximum
+position (2ms pulse), then decremented until it reaches its minimum position
+(1ms pulse). So the servo does round trips. The time to go from the
+minimum position to the maximum position is 5s. Assuming the position is
+incremented and decremented by one, what is the period of this task in
+counter tick unit?
+Program the resulting application.
+\end{ex}
 
-%%\section{Adding high level behavior}
+Now we want to be able to set the minimum and maximum positions of the servo. To do that we use buttons.
 
-%%Now we want to set the position of each servo. To do that we need 2 tasks, 1 for each servo, that set the position in a global variable, 1 for each servo. The corresponding variable is read by the \texttt{t_servoX} task to drive the servo.
+\begin{ex}
+Add to the previous application the following features and draw an automaton to model the application:
 
-%%\begin{ex}
-%%First we want the position of each servo incremented until it reaches its maximum position (2ms pulse), then decremented until it reaches its minimum position (1ms pulse). So the servo does round trips. The time we want to go from the minimum position to the maximum position is 5s. Assuming the position is incremented and decremented by one, what is the period of theses tasks in counter tick unit ?
-%%\end{ex}
+When button B4 is pressed, the servo stops its round-trip. Then (when round-trip is stopped), the following functions are available:
 
-%%Now we want to be able to set the minimum and maximum positions of the servo connected to pin 20. To do that we use buttons.
+When DIP switch B0 is ON, the minimum position is selected, the servo goes to this position. Then push buttons B7 decrements the minimum position and B5 increments the minimum position.
 
-%%\begin{ex}
-%%Add to the previous application the following features and draw an automaton to model the application:
+When DIP switch B0 is OFF, the maximum position is selected, the servo goes to this position. Then push buttons B7 decrements the maximum position and B5 increments the maximum position.
 
-%%When button P0-8 is pressed, servo connected to pin 20 stops its round-trip. If it is pressed again, round-trip continue. When the round-trip is stopped the following functions are available.
+Minimum position should be kept greater than or equal to the position corresponding to the 1ms pulse. Maximum position should be kept lower than or equal to the position corresponding to the 2ms pulse. Minimum position should be kept lower than or equal to the maximum position.
 
-%%When button P4-12 is pressed, the minimum position is selected, servo connected to pin 20 goes to this position. Then push buttons P2-10 decrements the minimum position and P1-9 increments the minimum position.
+When button B4 is pressed again, the servo resumes its round-trip within the minimum and maximum positions that have been set.
 
-%%When button P3-11 is pressed, the maximum position is selected, servo connected to pin 20 goes to this position. Then push buttons P2-10 decrements the minimum position and P1-9 increments the minimum position.
-
-%%Minimum position should be kept greater or equal than the position corresponding to the 1ms pulse. Maximum position should be kept lower or equal than the position corresponding to the 2ms pulse. Minimum position should be kept lower or equal than the maximum position.
-
-%%When button P0-8 is pressed, servo connected to pin 20 continues its round-trip and respects the minimum and maximum positions that have been set.
-%%\end{ex}
-
-
-
+\end{ex}
 
 \end{document}

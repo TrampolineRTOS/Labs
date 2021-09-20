@@ -1,0 +1,95 @@
+/*
+ * lab2.oil
+ * compile with: goil --target=posix  --templates=../trampoline/goil/templates/ lab2.oil
+ */
+
+OIL_VERSION = "2.5" : "lab2";
+
+IMPLEMENTATION trampoline {
+  /* This fix the default STACKSIZE of tasks */
+  TASK {
+    UINT32 STACKSIZE = 300;
+  };
+
+  /* This fix the default STACKSIZE of ISRs */
+  ISR {
+    UINT32 STACKSIZE = 200;
+  };
+};
+
+CPU tp1 {
+  /* This is the configuration of the operating system */
+  OS config {
+    /* Standard error checking, may be set to EXTENDED */
+    STATUS = STANDARD;
+    BUILD = TRUE {
+      TRAMPOLINE_BASE_PATH = "/Users/jlb/Develop/trampoline";
+      APP_CPPSRC = "lab2.cpp";
+      APP_NAME = "lab2.elf";
+      CFLAGS = "-Os -fstack-usage -Wno-strict-aliasing";
+      LIBRARY = coroBoard;
+      LDFLAGS = "-Map=lab2.map";
+      COMPILER = "arm-none-eabi-gcc";
+      CPPCOMPILER = "arm-none-eabi-g++";
+      ASSEMBLER = "arm-none-eabi-as";
+      LINKER = "arm-none-eabi-ld";
+      COPIER = "arm-none-eabi-objcopy";
+      SYSTEM = PYTHON;
+    };
+    SYSTEM_CALL = TRUE;
+    MEMMAP = TRUE {
+      COMPILER = gcc;
+      LINKER = gnu_ld { SCRIPT = "script.ld"; };
+      ASSEMBLER = gnu_as;
+      MEMORY_PROTECTION = FALSE;
+    };
+  };
+
+  /* A default APPMODE is mandatory */
+  APPMODE AppStd {};
+
+  TASK bgTask {
+    PRIORITY = 1;
+    AUTOSTART = TRUE {APPMODE = AppStd;}; /* READY state at startup */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;   /* task may be preempted */
+  };
+
+  TASK periodicTask {
+    PRIORITY = 5;      /* higher value, higher priority */
+    AUTOSTART = FALSE; /* SUSPENDED state at startup */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;   /* task may be preempted */
+  };
+  
+  TASK displayTask {
+    PRIORITY = 2;      /* higher value, higher priority */
+    AUTOSTART = FALSE; /* SUSPENDED state at startup */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;   /* task may be preempted */
+  };
+  
+  ALARM active_periodicTask {
+    COUNTER = SystemCounter; /* internal counter @10ms (from ViPer) */
+    ACTION = ACTIVATETASK {  /* action to do when alarm expires */
+      TASK = periodicTask;
+    };
+    AUTOSTART = TRUE {   /* activated at startup */
+      APPMODE = AppStd;
+      ALARMTIME = 1;  /* first time activation (from startup), in counter ticks */
+      CYCLETIME = 1;  /* time between 2 activations, after the first one */
+    };
+  };
+  
+  ALARM active_displayTask {
+    COUNTER = SystemCounter; /* internal counter @10ms (from ViPer) */
+    ACTION = ACTIVATETASK {  /* action to do when alarm expires */
+      TASK = displayTask;
+    };
+    AUTOSTART = TRUE {   /* activated at startup */
+      APPMODE = AppStd;
+      ALARMTIME = 1500;  /* first time activation (from startup), in counter ticks */
+      CYCLETIME = 1500;  /* time between 2 activations, after the first one */
+    };
+  };
+};

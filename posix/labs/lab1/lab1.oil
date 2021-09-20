@@ -1,0 +1,51 @@
+/* first run:
+ * goil --target=posix --templates=/opt/trampoline/goil/templates/ lab1.oil
+ */
+OIL_VERSION = "2.5";
+
+IMPLEMENTATION trampoline {
+  /* This fix the default STACKSIZE of tasks */
+  TASK {
+    UINT32 STACKSIZE = 32768 ;
+  };
+
+  /* This fix the default STACKSIZE of ISRs */
+  ISR {
+    UINT32 STACKSIZE = 32768 ;
+  };
+};
+
+CPU lab1 {
+  OS config {
+    STATUS = EXTENDED;
+    PAINT_STACK = TRUE;
+    PAINT_REGISTERS = TRUE;
+	TRACE = TRUE {
+		FORMAT = json;
+		PROC = TRUE;
+        RESOURCE = TRUE;
+        ALARM = TRUE;
+        EVENT = TRUE;
+    };
+    BUILD = TRUE {
+      TRAMPOLINE_BASE_PATH = "/opt/trampoline";
+      APP_SRC  = "lab1.c";
+      APP_NAME = "lab1_exe";
+      CFLAGS="-ggdb";
+      LDFLAGS="-lrt -lpthread";
+      LINKER = "gcc";
+      SYSTEM = PYTHON;
+    };
+  };
+
+  APPMODE AppStd {};
+
+  TASK task1 {
+    PRIORITY = 2;
+    AUTOSTART = TRUE {
+      APPMODE = AppStd;
+    };
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+  };
+};

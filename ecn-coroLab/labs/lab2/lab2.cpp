@@ -1,15 +1,9 @@
 #include "tpl_os.h"
-
-#ifdef __cplusplus
- extern "C" {
-#endif /* __cplusplus */
-#include "coro_utils.h"
+#include "mcp23s17.h"
 
 FUNC(int, OS_APPL_CODE) main(void)
 {
-    setupIOExtender();
-    setupDisplay();
-    setupTimer();
+    initCoroBoard();
     StartOS(OSDEFAULTAPPMODE);
     return 0;
 }
@@ -48,7 +42,7 @@ FUNC(t_switch_event, OS_APPL_CODE) updateStateOfB0()
 
 TASK(tpoll)
 {
-    t_switch_event event = updateStateOfB4();
+    t_switch_event event = updateStateOfB0();
     if (event == evCLOSED)
     {
         ioExt.digitalWrite(mcp23s17::PORTA, 3, 1);
@@ -59,17 +53,3 @@ TASK(tpoll)
     }
     TerminateTask();
 }
-
-
-/*
- *  * This is necessary for ST libraries
- *   */
-FUNC(void, OS_CODE) assert_failed(uint8_t* file, uint32_t line)
-{
-}
-
-extern "C" void __cxa_pure_virtual() { while (1); }
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */

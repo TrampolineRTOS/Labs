@@ -1,0 +1,11 @@
+lab3
+lab3_exe
+lab3.json
+readTrace.py
+trace.json
+build
+*.elf
+*.bin
+*.map
+make.py
+build.py
