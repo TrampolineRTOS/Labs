@@ -88,7 +88,7 @@ sets the \texttt{trampoline} directory as current directory. This assumes the \t
 The tools that we will use have already been installed on the machine:
 
 \begin{itemize}
-  \item Trampoline RTOS and the \texttt{goil} configuration generator;
+%  \item Trampoline RTOS and the \texttt{goil} configuration generator;
 
   \item \texttt{arm-none-eabi-gcc toolchain} including among other tools a c
     compiler and a c debugger;
@@ -97,7 +97,24 @@ The tools that we will use have already been installed on the machine:
 \end{itemize}
 
 
-Trampoline is installed in \unixcl{/opt/trampoline}. \texttt{goil} configuration generator is installed in \unixcl{/usr/local/bin}. The toolchain and \texttt{stlink}, the tool used to download binaries on the board, are installed in \unixcl{/opt}. All the usefull paths are set in the \unixcl{.profile} startup file of your account.
+You have to download Trampoline from GitHub. Open the Terminal. The current directory is the home directory of your account. Type: 
+
+\unixcl{git\blanc{}clone\blanc{}https://github.com/TrampolineRTOS/trampoline.git}
+
+Trampoline will be pulled and you end with a \texttt{trampoline} directory in youy home directory. The first thing to do is to compile the \texttt{goil}, OIL compiler. Type:
+
+\unixcl{cd\blanc{}trampoline/goil/makefile-macosx}
+
+Then:
+
+\unixcl{./build.py}
+
+Once goil compilation is done. Check the generated binary is working:
+
+\unixcl{./goil\blanc{}--version}
+
+You should have the following output:
+
 
 %In order to be able to use the tools, you have to define the configuration of your development environment.
 %First, you have to inform the system of the location of the tools.
@@ -121,22 +138,19 @@ Trampoline is installed in \unixcl{/opt/trampoline}. \texttt{goil} configuration
 %This will enable the configuration in the terminal where you typed the command.
 %In order to have the configuration active in all terminals, you have to log out and then log in the system.
 
-Now, check that \texttt{goil} is working.
-The command \unixcl{goil\blanc{}--version} should print:
-
 \medskip
 
 \begin{shaded*}
 \scriptsize
 \vspace{-1.7mm}
 \begin{verbatim}
-goil : 3.1.9, build with GALGAS 3.3.11
+./goil : 3.1.12, build with GALGAS 3.4.3
 No warning, no error.
 \end{verbatim}
 \end{shaded*}
 
 Then check that \texttt{gcc-arm} is also working.
-The command \unixcl{arm-none-eabi-gcc\blanc{}--version} should print:
+The command \unixcl{arm-none-eabi-gcc\blanc{}--version} should print (maybe with a different version number):
 
 \medskip
 
@@ -152,7 +166,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \end{shaded*}
 
 Last, check that \texttt{stlink} tools are available with the following command: \unixcl{st-info\blanc{}--version}.
-The output should be:
+The output should be (maybe with a different version number):
 
 \medskip
 
@@ -163,6 +177,11 @@ The output should be:
 v1.3.0
 \end{verbatim}
 \end{shaded*}
+
+\noindent
+\begin{framed}
+Call the supervisor to set the environment variables up !
+\end{framed}
 
 You are now ready to compile and load your first application on the board. But first, let's take a quick look at the board.
 
@@ -941,7 +960,7 @@ Modify the OIL file: all tasks are now non preemptive. Draw a schedule of the sy
     Design and program such an application.
 \end{ex}
 
-\chapter{Lab4\\Internal communication}
+\chapter{Lab 4 -- Internal communication}
 
 \section{Overview}
 
@@ -984,7 +1003,7 @@ Add a filter to activate task \texttt{receiver} upon the 4th message and then ev
 
 
 
-\chapter{Lab5\\Driving servos}
+\chapter{Lab 5 -- Driving servos}
 
 The goal of this lab is to build a small application to drive a servomotor. Get the \texttt{servo_start} package from \url{https://github.com/TrampolineRTOS/Labs}.
 
